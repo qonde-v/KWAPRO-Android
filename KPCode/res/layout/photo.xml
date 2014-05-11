@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/zhuce_xztx" >
+     <RelativeLayout
+        android:id="@+id/rlTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/headpic"
+            android:textSize="30sp" />
+    </RelativeLayout>
+ <RelativeLayout
+         android:id="@+id/rlImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rlTop"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+     >
+     <ImageView 
+         android:id="@+id/btnCammer"
+           android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+      android:background="@drawable/zc_dot_01"/>
+     <ImageView 
+         android:id="@+id/btnPhotoChoose"
+           android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="120dp"
+      android:background="@drawable/zc_dot_02"/>
+ </RelativeLayout>
+  <RelativeLayout
+      android:layout_below="@+id/rlImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+      >
+       <TextView
+            android:id="@+id/txtPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:text="@string/canmer"
+            android:textSize="25sp" />
+        <TextView
+            android:id="@+id/txtPhotoChoose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           android:layout_marginLeft="120dp"
+            android:text="@string/photo"
+            android:textSize="25sp" />
+  </RelativeLayout>
+</RelativeLayout>

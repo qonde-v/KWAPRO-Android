@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <com.example.animationtobhost.AnimationTabWidget
+        android:id="@+id/vWidget"
+        android:layout_width="fill_parent"
+        android:layout_height="46dp" >
+    </com.example.animationtobhost.AnimationTabWidget>
+
+    <com.example.animationtobhost.ViewPager
+        android:id="@+id/vPager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:fadingEdge="none"
+        android:flipInterval="30"
+        android:focusable="false"
+        android:persistentDrawingCache="animation" />
+
+ 
+
+</LinearLayout>

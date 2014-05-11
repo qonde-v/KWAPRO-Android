@@ -1,0 +1,149 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:whty="http://schemas.android.com/apk/res/com.televehicle.trafficpolice"
+    xmlns:tools="http://schemas.android.com/tools"
+      android:id="@+id/main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/content_bg"
+    android:orientation="vertical" >
+
+    <!-- 原来的头部tab -->
+    <!--
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:layout_gravity="center"
+        android:layout_weight="0"
+        android:background="@drawable/top_title_bg" >
+
+        <RelativeLayout
+            android:layout_width="50dp"
+            android:layout_height="fill_parent"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:background="#00000000" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:background="@drawable/head_page_title_left" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="50dp"
+            android:background="@drawable/topxian" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="通讯录TabHost"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+    </RelativeLayout>
+    -->
+
+    <com.example.animationtobhost.AnimationTabHost
+        android:id="@+id/tabHost"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
+    <!-- 底部按钮 -->
+
+    <RelativeLayout
+        
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:background="@drawable/bottom_bg" >
+
+        <RelativeLayout
+            android:id="@+id/rlbtnRegister"
+            android:layout_width="158dp"
+            android:layout_height="fill_parent"
+            android:gravity="left" >
+
+            <ImageView
+                 android:id="@+id/imgRegister_btm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:background="@drawable/zhuce" />
+
+            <Button
+                android:id="@+id/btnRegister_btm"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="65dp"
+                android:background="#00000000"
+                android:text="@string/strRegister"
+                android:textColor="#ffffff" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlbtnLogin"
+            android:layout_width="158dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/rlbtnRegister" >
+
+            <Button
+                android:id="@+id/btnLogin_btm"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="95dp"
+                android:background="#00000000"
+                android:text="@string/strLogin"
+                android:textColor="#ffffff" />
+
+            <ImageView
+                 android:id="@+id/imgLogin_btm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60dp"
+                android:background="@drawable/denglu" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- 底部按钮old -->
+
+
+    <!--
+    <LinearLayout
+        android:id="@+id/menu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        
+        android:gravity="center" >
+		
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="@string/strLogin" />
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="@string/strRegister" />
+        
+    </LinearLayout>
+    -->
+
+</RelativeLayout>

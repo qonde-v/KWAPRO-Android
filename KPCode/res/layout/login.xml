@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="330dp"
+    android:layout_height="260dp"
+    android:background="@drawable/tianchuk_bg" >
+
+    <RelativeLayout
+        android:id="@+id/rlTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/strLogin"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rlTop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp" >
+
+        
+        <EditText
+            android:id="@+id/txtLoginName"
+            android:layout_width="260dp"
+            android:layout_height="40dp"
+            android:background="@drawable/shuruk_bg"
+            android:hint="@string/strloginname"
+            android:textColor="#A29D9C"
+            android:paddingLeft="10dp"
+            android:textSize="16sp" >
+
+           <!--  <requestFocus /> -->
+        </EditText>
+       
+
+      <!--   <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/imgLogin"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+              
+                android:background="@drawable/shuruk_bg" />
+
+            <EditText
+                android:id="@+id/txtLoginName"
+                android:layout_width="263dp"
+                android:layout_height="38dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/strloginname"
+                android:textColor="#A29D9C"
+                android:textSize="16sp" >
+
+                <requestFocus />
+            </EditText>
+        </RelativeLayout> -->
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlPwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rlLogin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp" >
+
+        <EditText
+            android:id="@+id/txtPwd"
+            android:layout_width="260dp"
+            android:layout_height="40dp"
+            android:background="@drawable/shuruk_bg"
+            android:hint="@string/strloginpw"
+            android:password="true"
+            android:paddingLeft="10dp"
+            android:textColor="#A29D9C"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rlPwd"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp" >
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:gravity="left" >
+
+            <ImageView
+                android:id="@+id/imgLogin"
+                android:layout_width="32dp"
+                android:layout_height="28dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/dot_dui" />
+			 
+          <TextView
+                android:id="@+id/btnLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:text="@string/strsure"
+                android:textColor="#3E64CB"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="18dp"
+            android:layout_toRightOf="@+id/relativeLayout1"
+            android:gravity="right" >
+
+            <ImageView
+                android:id="@+id/imgCancel"
+                android:layout_width="32dp"
+                android:layout_height="28dp"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/dot_cuo" />
+
+           
+              <TextView
+                android:id="@+id/btnCalcel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="55dp"
+                android:text="@string/strcancel"
+                android:textColor="#3E64CB"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
