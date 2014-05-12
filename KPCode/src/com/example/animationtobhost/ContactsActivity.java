@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import android.annotation.SuppressLint;
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,21 +30,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TextView;
 
 import com.example.animationtobhost.AnimationTabHost.onPageChangedListener;
-import com.example.animationtobhost.util.APIUtil;
-import com.example.animationtobhost.util.MyHttpclient;
-//import android.view.KeyEvent;
-//import android.widget.LinearLayout;
-//import android.widget.Toast;
-//import android.graphics.Color;
+import com.example.animationtobhost.api.HttpConstants;
+import com.example.animationtobhost.util.HttpUtil;
+import com.example.animationtobhost.util.SharePreferenceUtil;
 
-@SuppressLint("HandlerLeak")
 public class ContactsActivity extends ActivityGroup implements
 		onPageChangedListener, OnClickListener {
-
+	
+	private PopupWindow mPopupwinow = null;//弹出菜单
+	private View llyPopView;//弹出菜单显示的View
+	private ImageView ivMenu;//菜单按钮
+	private ImageView ivSearch;
+	private RelativeLayout rlBottom;//底部按钮
+//	private RelativeLayout rlbtnRegister;//注册按钮layout
+//	private RelativeLayout rlbtnLogin;//登录按钮layout
 	private static final String TAG = "WeiboActivity";
 	private static final int NETWORK_ERROR = 1;
 	private Context mContext;
@@ -65,12 +73,16 @@ public class ContactsActivity extends ActivityGroup implements
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.contacts_main);
-
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
 		mContext = this;
 
 		getView();
 		initView();
+		
+		initButton();
+		initPop();
+		
+		checkUser();
 	}
 
 	/**
@@ -106,14 +118,17 @@ public class ContactsActivity extends ActivityGroup implements
 	 * getview
 	 */
 	private void getView() {
-		// btn_back = (Button) findViewById(R.id.btn_back);
-		// btn_back.setOnClickListener(this);
 
 		animationTabHost = (AnimationTabHost) findViewById(R.id.tabHost);
 		animationTabHost.setOnPageChnageListener(this);
 
-		// layout = View.inflate(this, R.layout.login, null);
-
+		
+	}
+	//初始化登陆注册按钮事件
+	private void initButton(){
+//		rlbtnRegister=(RelativeLayout) this.findViewById(R.id.rlbtnRegister);
+//		rlbtnLogin=(RelativeLayout) this.findViewById(R.id.rlbtnLogin);
+		rlBottom=(RelativeLayout) this.findViewById(R.id.rlBottom);
 		Button btnRegister_btm = (Button) this
 				.findViewById(R.id.btnRegister_btm);
 		Button btnLogin_btm = (Button) this.findViewById(R.id.btnLogin_btm);
@@ -121,116 +136,38 @@ public class ContactsActivity extends ActivityGroup implements
 				.findViewById(R.id.imgRegister_btm);
 		ImageView imgLogin_btm = (ImageView) this
 				.findViewById(R.id.imgLogin_btm);
-		// RelativeLayout rlbtnRegister = (RelativeLayout)
-		// findViewById(R.id.rlbtnRegister);
-		// RelativeLayout rlbtnLogin = (RelativeLayout)
-		// findViewById(R.id.rlbtnLogin);
-		btnRegister_btm.setOnClickListener(hander);
-		btnLogin_btm.setOnClickListener(hander);
-		imgRegister_btm.setOnClickListener(hander);
-		imgLogin_btm.setOnClickListener(hander);
-		// rlbtnLogin.setOnClickListener(hander);
-		// rlbtnRegister.setOnClickListener(hander);
+		btnRegister_btm.setOnClickListener(buttonClickListener);
+		btnLogin_btm.setOnClickListener(buttonClickListener);
+		imgRegister_btm.setOnClickListener(buttonClickListener);
+		imgLogin_btm.setOnClickListener(buttonClickListener);
 	}
-
-	View.OnClickListener hander = new OnClickListener() {
+	View.OnClickListener buttonClickListener = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
-
 			switch (v.getId()) {
 			case R.id.btnLogin_btm:
 			case R.id.imgLogin_btm:
-				// case R.id.rlbtnLogin:
-				// Intent i = new Intent(ContactsActivity.this, Login.class);
-				// startActivity(i);
-				// Toast.makeText(ContactsActivity.this, "m2",
-				// Toast.LENGTH_LONG).show();
-				popWindow();
+				initPopWindow();//登录弹窗
 				break;
 			case R.id.btnRegister_btm:
 			case R.id.imgRegister_btm:
-				// case R.id.rlbtnRegister:
-				Intent i2 = new Intent(ContactsActivity.this, Register.class);
-				// Intent i2 = new Intent(ContactsActivity.this, Index.class);
+				Intent i2 = new Intent(ContactsActivity.this, RegisterActivity.class);//跳转到注册页面
 				startActivity(i2);
 				break;
 			}
 		}
 	};
 
-	/**
-	 * 弹窗
-	 */
-	private void popWindow() {
-
-		initPopWindow();
-		// mPop.showAsDropDown(this.layout);// 以这个Button为anchor（可以理解为锚，基准），在下方弹出
-		// mPop.showAtLocation(this.findViewById(R.id.main),
-		// Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-		// //设置layout在PopupWindow中显示的位置
-//		mPop.showAtLocation(ContactsActivity.this.findViewById(R.id.main),
-//				Gravity.CENTER, 0, 0);// 在屏幕居中，无偏移
-
-		// Toast.makeText(ContactsActivity.this, "1",Toast.LENGTH_LONG).show();
-		// // if(menu_display){ //如果 Menu已经打开 ，先关闭Menu
-		// // menuWindow.dismiss();
-		// // menu_display = false;
-		// // }
-		//
-		// //获取LayoutInflater实例
-		// //inflater =
-		// (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-		// //这里的main布局是在inflate中加入的哦，以前都是直接this.setContentView()的吧？呵呵
-		// //该方法返回的是一个View的对象，是布局中的根
-		// layout = inflater.inflate(R.layout.contacts_main, null);
-		// try
-		// {
-		// // TODO Auto-generated method stub
-		// //下面我们要考虑了，我怎样将我的layout加入到PopupWindow中呢？？？很简单
-		// menuWindow = new PopupWindow(layout,LayoutParams.FILL_PARENT,
-		// LayoutParams.WRAP_CONTENT); //后两个参数是width和height
-		// //menuWindow.showAsDropDown(layout); //设置弹出效果
-		// //menuWindow.showAsDropDown(null, 0, layout.getHeight());
-		// //this.findViewById(R.id.btn_bg);
-		// menuWindow.showAtLocation(this.findViewById(R.id.main),
-		// Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-		// //设置layout在PopupWindow中显示的位置
-		//
-		// Intent intent = new Intent();
-		// intent.setClass(ContactsActivity.this,Login.class);
-		// startActivity(intent);
-		// menuWindow.dismiss(); //响应点击事件之后关闭Menu
-		// }
-		// catch (Exception e) {
-		// Toast.makeText(ContactsActivity.this,
-		// e.toString(),Toast.LENGTH_LONG).show();
-		// System.out.println(e.toString());
-		// // throw e;
-		// } finally {
-		// System.out.println("finally " );
-		// }
-
-	}
-
+	//登录弹窗
 	private void initPopWindow() {
 		if (mPop == null) {
-			 inflater =(LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-			// layout = View.inflate(this, R.layout.test2, null);
-			//layout = View.inflate(this, R.layout.login, null);
-			 layout = inflater.inflate( R.layout.login, null);
-			// layout =
-			// getLayoutInflater().inflate(R.layout.hotel_sort_popview,null);
-			// mPop= new PopupWindow(layout,LayoutParams.FILL_PARENT,
-			// LayoutParams.WRAP_CONTENT); //后两个参数是width和height
-			
-			//mPop = new PopupWindow(layout, 300,500);
+			inflater =(LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+			layout = inflater.inflate( R.layout.login, null);
 			mPop = new PopupWindow(layout, LayoutParams.WRAP_CONTENT,
 					LayoutParams.WRAP_CONTENT);
 			mPop.setFocusable(true);
 			mPop.setOutsideTouchable(true);
-
 			btnCancel = (TextView) layout.findViewById(R.id.btnCalcel);
 			imgCancel = (ImageView) layout.findViewById(R.id.imgCancel);
 			btnLogin = (TextView) layout.findViewById(R.id.btnLogin);
@@ -246,7 +183,6 @@ public class ContactsActivity extends ActivityGroup implements
 			mPop.setAnimationStyle(android.R.style.Animation_Toast);
             //监听窗口消失
             mPop.setOnDismissListener(new OnDismissListener() {
-				
 				@Override
 				public void onDismiss() {
 					WindowManager.LayoutParams lp = getWindow().getAttributes();
@@ -267,25 +203,18 @@ public class ContactsActivity extends ActivityGroup implements
 		
 	}
 
-	// 弹窗zhong按钮事件
+	// 弹窗中按钮事件
 	View.OnClickListener handerPop = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
-
 			switch (v.getId()) {
-			// btnCancel.setOnClickListener(hander);
-			// imgCancel.setOnClickListener(hander);
-			// btnLogin.setOnClickListener(hander);
-			// imgLogin.setOnClickListener(hander);
 			case R.id.btnCalcel:
 			case R.id.imgCancel:
 				if (mPop.isShowing()) {
 					mPop.dismiss();
 				}
 				break;
-
 			case R.id.btnLogin:
 			case R.id.imgLogin:
 				userLogin();
@@ -317,9 +246,7 @@ public class ContactsActivity extends ActivityGroup implements
 		if (mPop.isShowing()&&mPop!=null) {
 			mPop.dismiss();
 		}
-		
 		new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
 				
@@ -328,7 +255,7 @@ public class ContactsActivity extends ActivityGroup implements
 				maps.put("pwd", pwd);
 				
 				try {
-					result=MyHttpclient.requestByPost(APIUtil.loginUrl, maps, 8);
+					result=HttpUtil.requestByPost(HttpConstants.HttpLogin, maps, 8);
 					Message msg=new Message();
 					msg.what=1;
 					ContactsActivity.this.MyHandler.sendMessage(msg);
@@ -338,33 +265,18 @@ public class ContactsActivity extends ActivityGroup implements
 				
 			}
 		}).start();
-		
-		
-		// else {
-		// // // 调用服务登录。。
-		// // // Toast.makeText(Login.this, "1",Toast.LENGTH_LONG
-		// // // ).show();
-		// // // 回传参
-		// // Toast.makeText(Login.this, "1", Toast.LENGTH_LONG).show();
-		// // Intent data = new Intent();
-		// //
-		// // // Intent intent = new Intent();
-		// // // intent.setClass(Login.this, MainActivity.class);
-		// // // startActivity(intent);
-		// // setResult(RESULT_OK, data);
-		// // // setResult(RESULT_OK);
-		// //
-		// // finish();// 此处一定要调用finish()方法
-		//
-		// }
 	}
 	
 	Handler MyHandler=new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case 1:
+			case 1://登录成功
 				Log.i("result1", result);
+				SharePreferenceUtil sharedPreferences=new SharePreferenceUtil(ContactsActivity.this, "share");
+				sharedPreferences.saveSharedPreferencesString("user", "test");
+				checkUser();
+			    
 				break;
 
 			default:
@@ -375,36 +287,106 @@ public class ContactsActivity extends ActivityGroup implements
 
 	@Override
 	public void onClick(View v) {
-		// switch (v.getId()) {
-		// case R.id.btn_back:
-		// // 返回
-		// finish();
-		// break;
-		//
-		// default:
-		// break;
-		// }
+		
 	}
-
-	// @Override
-	// public boolean onKeyDown(int keyCode, KeyEvent event) {
-	// if (keyCode == KeyEvent.KEYCODE_BACK) {
-	// finish();
-	// }
-	// return super.onKeyDown(keyCode, event);
-	// }
-
-	/**
-	 * ui主线程
-	 */
-	// Handler mHandler = new Handler() {
-	// public void handleMessage(Message msg) {
-	// int state = msg.what;
-	//
-	// };
-	// };
 
 	@Override
 	public void onPageChange(int index) {
 	}
+	
+	//根据是否登录显示隐藏
+	public void checkUser(){
+		SharePreferenceUtil sharedPreferences=new SharePreferenceUtil(ContactsActivity.this, "share");
+		String user=sharedPreferences.getSharedPreferenceString("user");
+		if(user==null){
+        	ivMenu.setVisibility(View.GONE);
+        	ivSearch.setVisibility(View.GONE);
+        	rlBottom.setVisibility(View.VISIBLE);
+        }else{
+        	ivMenu.setVisibility(View.VISIBLE);
+        	ivSearch.setVisibility(View.VISIBLE);
+        	rlBottom.setVisibility(View.GONE);
+        }
+	}
+	
+		//初始化弹出菜单
+		public void initPop(){
+		    llyPopView = LayoutInflater.from(ContactsActivity.this).inflate(
+					R.layout.popup_menu, null);
+	        ivMenu=(ImageView) findViewById(R.id.iv_menu);
+	        ivSearch=(ImageView) findViewById(R.id.iv_search);
+	        ivMenu.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					WindowManager wm=(WindowManager) ContactsActivity.this.getSystemService(Context.WINDOW_SERVICE);
+					int width=wm.getDefaultDisplay().getWidth();
+					if (mPopupwinow == null) {
+						mPopupwinow = new PopupWindow(llyPopView,width/3,LayoutParams.WRAP_CONTENT, true);
+						mPopupwinow.setBackgroundDrawable(new ColorDrawable(0x00000000));
+					}
+					Rect frame = new Rect();
+					getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+					int statusBarHeight = frame.top;
+					int contentTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+					int titleBarHeight = contentTop - statusBarHeight;
+					mPopupwinow.setAnimationStyle(android.R.style.Animation_Dialog);
+					mPopupwinow.showAtLocation(llyPopView,
+		    				Gravity.RIGHT|Gravity.TOP, 0, titleBarHeight+50);
+					
+					mPopupwinow.showAsDropDown(llyPopView);
+				}
+	       });
+	       initPopListener();
+		}
+		
+		//弹出菜单监听事件
+		public void initPopListener(){
+			TextView tv_menu_msg=(TextView) llyPopView.findViewById(R.id.tv_menu_msg);
+			TextView tv_menu_firend=(TextView) llyPopView.findViewById(R.id.tv_menu_firend);
+			TextView tv_menu_question=(TextView) llyPopView.findViewById(R.id.tv_menu_question);
+			TextView tv_menu_info=(TextView) llyPopView.findViewById(R.id.tv_menu_info);
+			TextView tv_menu_about=(TextView) llyPopView.findViewById(R.id.tv_menu_about);
+			TextView tv_menu_exit=(TextView) llyPopView.findViewById(R.id.tv_menu_exit);
+			tv_menu_msg.setOnClickListener(menuClick);
+			tv_menu_firend.setOnClickListener(menuClick);
+			tv_menu_question.setOnClickListener(menuClick);
+			tv_menu_info.setOnClickListener(menuClick);
+			tv_menu_about.setOnClickListener(menuClick);
+			tv_menu_exit.setOnClickListener(menuClick);
+		}
+		OnClickListener menuClick=new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(mPopupwinow!=null){
+					mPopupwinow.dismiss();
+				}
+				switch (v.getId()) {
+				case R.id.tv_menu_msg:
+					Toast.makeText(ContactsActivity.this, "msg", Toast.LENGTH_SHORT).show();
+					
+					break;
+				case R.id.tv_menu_firend:
+					
+					break;
+				case R.id.tv_menu_question:
+								
+					break;
+				case R.id.tv_menu_info:
+					
+					break;
+				case R.id.tv_menu_about:
+					
+					break;
+				case R.id.tv_menu_exit:
+					SharePreferenceUtil sharedPreferences=new SharePreferenceUtil(ContactsActivity.this, "share");
+					sharedPreferences.removeSharedPreferencesString("user");
+					checkUser();
+					break;
+				default:
+					break;
+				}
+				
+			}
+			
+		};
 }

@@ -39,6 +39,7 @@
             android:hint="@string/strloginname"
             android:textColor="#A29D9C"
             android:paddingLeft="10dp"
+            android:singleLine="true"
             android:textSize="16sp" >
 
            <!--  <requestFocus /> -->
@@ -88,6 +89,7 @@
             android:background="@drawable/shuruk_bg"
             android:hint="@string/strloginpw"
             android:password="true"
+            android:singleLine="true"
             android:paddingLeft="10dp"
             android:textColor="#A29D9C"
             android:textSize="16sp" />

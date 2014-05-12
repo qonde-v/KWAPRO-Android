@@ -68,59 +68,68 @@ containing a value of this type.
         public static final int zhuce_xztx=0x7f02001f;
     }
     public static final class id {
-        public static final int btnCalcel=0x7f07001a;
-        public static final int btnCammer=0x7f070022;
-        public static final int btnLogin=0x7f070018;
-        public static final int btnLogin_btm=0x7f07000b;
-        public static final int btnPhotoChoose=0x7f070023;
-        public static final int btnRegister=0x7f070033;
-        public static final int btnRegisterFinish=0x7f070031;
-        public static final int btnRegister_btm=0x7f070009;
-        public static final int btn_back=0x7f070034;
-        public static final int btn_back2=0x7f070035;
+        public static final int btnCalcel=0x7f07001b;
+        public static final int btnCammer=0x7f070023;
+        public static final int btnLogin=0x7f070019;
+        public static final int btnLogin_btm=0x7f07000c;
+        public static final int btnPhotoChoose=0x7f070024;
+        public static final int btnRegister=0x7f07003a;
+        public static final int btnRegisterFinish=0x7f070038;
+        public static final int btnRegister_btm=0x7f07000a;
+        public static final int btn_back=0x7f07003b;
+        public static final int btn_back2=0x7f07003c;
         public static final int btn_bg=0x7f070004;
         public static final int btn_glide=0x7f070003;
-        public static final int imgCancel=0x7f070019;
-        public static final int imgFemale=0x7f070028;
-        public static final int imgLogin=0x7f070017;
-        public static final int imgLogin_btm=0x7f07000c;
-        public static final int imgMale=0x7f070027;
-        public static final int imgRegister_btm=0x7f070008;
-        public static final int imgbtnFemale=0x7f07002a;
-        public static final int imgbtnMale=0x7f070029;
-        public static final int ivHead=0x7f07001b;
-        public static final int listView=0x7f070020;
+        public static final int imgCancel=0x7f07001a;
+        public static final int imgFemale=0x7f07002f;
+        public static final int imgLogin=0x7f070018;
+        public static final int imgLogin_btm=0x7f07000d;
+        public static final int imgMale=0x7f07002e;
+        public static final int imgRegister_btm=0x7f070009;
+        public static final int imgbtnFemale=0x7f070031;
+        public static final int imgbtnMale=0x7f070030;
+        public static final int ivHead=0x7f07001c;
+        public static final int iv_menu=0x7f07003e;
+        public static final int iv_search=0x7f07003d;
+        public static final int listView=0x7f070021;
         public static final int main=0x7f070005;
-        public static final int mybottomviewgroup=0x7f07000d;
-        public static final int relativeLayout1=0x7f070016;
-        public static final int relativeLayout2=0x7f070032;
-        public static final int rlEmail=0x7f07002b;
-        public static final int rlImg=0x7f070021;
-        public static final int rlLogin=0x7f070011;
-        public static final int rlPassword=0x7f07002e;
-        public static final int rlPwd=0x7f070013;
-        public static final int rlTop=0x7f07000f;
-        public static final int rlTopImg=0x7f070026;
-        public static final int rlbtn=0x7f070015;
-        public static final int rlbtnLogin=0x7f07000a;
-        public static final int rlbtnRegister=0x7f070007;
+        public static final int mybottomviewgroup=0x7f07000e;
+        public static final int relativeLayout1=0x7f070017;
+        public static final int relativeLayout2=0x7f070039;
+        public static final int rlBottom=0x7f070007;
+        public static final int rlEmail=0x7f070032;
+        public static final int rlImg=0x7f070022;
+        public static final int rlLogin=0x7f070012;
+        public static final int rlPassword=0x7f070035;
+        public static final int rlPwd=0x7f070014;
+        public static final int rlTop=0x7f070010;
+        public static final int rlTopImg=0x7f07002d;
+        public static final int rlbtn=0x7f070016;
+        public static final int rlbtnLogin=0x7f07000b;
+        public static final int rlbtnRegister=0x7f070008;
         public static final int tabHost=0x7f070006;
-        public static final int textView1=0x7f070010;
-        public static final int textView2=0x7f07002c;
-        public static final int textView3=0x7f07002f;
-        public static final int tvId=0x7f07001d;
-        public static final int tvName=0x7f07001c;
-        public static final int tvTelephone=0x7f07001f;
-        public static final int tvTelephoneId=0x7f07001e;
-        public static final int txtEmail=0x7f07002d;
-        public static final int txtLoginName=0x7f070012;
-        public static final int txtPassword=0x7f070030;
-        public static final int txtPhoto=0x7f070024;
-        public static final int txtPhotoChoose=0x7f070025;
-        public static final int txtPwd=0x7f070014;
+        public static final int textView1=0x7f070011;
+        public static final int textView2=0x7f070033;
+        public static final int textView3=0x7f070036;
+        public static final int tvId=0x7f07001e;
+        public static final int tvName=0x7f07001d;
+        public static final int tvTelephone=0x7f070020;
+        public static final int tvTelephoneId=0x7f07001f;
+        public static final int tv_menu_about=0x7f07002b;
+        public static final int tv_menu_exit=0x7f07002c;
+        public static final int tv_menu_firend=0x7f070028;
+        public static final int tv_menu_info=0x7f07002a;
+        public static final int tv_menu_msg=0x7f070027;
+        public static final int tv_menu_question=0x7f070029;
+        public static final int txtEmail=0x7f070034;
+        public static final int txtLoginName=0x7f070013;
+        public static final int txtPassword=0x7f070037;
+        public static final int txtPhoto=0x7f070025;
+        public static final int txtPhotoChoose=0x7f070026;
+        public static final int txtPwd=0x7f070015;
         public static final int vPager=0x7f070001;
         public static final int vWidget=0x7f070000;
-        public static final int viewpager=0x7f07000e;
+        public static final int viewpager=0x7f07000f;
         public static final int widget_main=0x7f070002;
     }
     public static final class layout {
@@ -132,10 +141,11 @@ containing a value of this type.
         public static final int my_contacts_item=0x7f030005;
         public static final int my_contacts_list=0x7f030006;
         public static final int photo=0x7f030007;
-        public static final int register=0x7f030008;
-        public static final int test=0x7f030009;
-        public static final int test2=0x7f03000a;
-        public static final int title=0x7f03000b;
+        public static final int popup_menu=0x7f030008;
+        public static final int register=0x7f030009;
+        public static final int test=0x7f03000a;
+        public static final int test2=0x7f03000b;
+        public static final int title=0x7f03000c;
     }
     public static final class string {
         public static final int action_settings=0x7f050001;
@@ -171,6 +181,10 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f060001;
+        public static final int CustomWindowTitleBackground=0x7f060002;
+        /**  标题栏样式 
+         */
+        public static final int test=0x7f060003;
     }
     public static final class styleable {
         /** Attributes that can be used with a WicityTab.

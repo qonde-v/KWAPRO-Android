@@ -14,24 +14,16 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/test" >
 
         <!-- android:theme="@android:style/Theme.NoTitleBar" -->
-        <!--
-        <activity
+        <activity 
             android:name="com.example.animationtobhost.ContactsActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        -->
-        <activity android:name="com.example.animationtobhost.ContactsActivity" />
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.example.animationtobhost.Index"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" >
             <intent-filter>
@@ -42,9 +34,11 @@
         </activity>
         <!-- <activity android:name="com.example.animationtobhost.Index" /> -->
         <activity android:name="com.example.animationtobhost.MyContactsList" />
-        <activity android:name="Register" >
-        </activity>
-        <activity android:name="Login" >
+        <!-- 注册页 -->
+        <activity 
+            android:name="com.example.animationtobhost.RegisterActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 
