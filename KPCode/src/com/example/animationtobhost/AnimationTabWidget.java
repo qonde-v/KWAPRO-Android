@@ -37,7 +37,7 @@ import android.widget.TextView;
 public class AnimationTabWidget extends LinearLayout implements OnClickListener {
 	
 	private ViewPager viewPager;
-	private ImageView glide; // 动画图片，tabhost标题下的小图,此处不需要
+	//private ImageView glide; // 动画图片，tabhost标题下的小图,此处不需要
 	private LinearLayout linearLayout;
 	private int color;
 	private Context mContext;
@@ -57,7 +57,7 @@ public class AnimationTabWidget extends LinearLayout implements OnClickListener 
 		mContext=context;
 		inflate(context, R.layout.animation_tab_widget, this);
 		linearLayout = (LinearLayout) findViewById(R.id.widget_main);
-		glide = (ImageView) findViewById(R.id.btn_glide);
+		//glide = (ImageView) findViewById(R.id.btn_glide);
 	}
 
 	public void setActivities(List<Activity> activities,ViewPager viewPager){
@@ -65,9 +65,9 @@ public class AnimationTabWidget extends LinearLayout implements OnClickListener 
 		initActivity(activities);
 	}
 	 // 动画图片，tabhost标题下的小图,此处不需要,,隐藏
-	public ImageView getSlideImageView(){
-		return glide;
-	}
+	//public ImageView getSlideImageView(){
+	//	return glide;
+	//}
 
 	/**
 	 * @param activities,初始化标题栏

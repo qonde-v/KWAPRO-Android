@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/content_bg"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/ll_top"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:orientation="vertical" >
+
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/rb_news"
+                android:background="@drawable/caidan_lanbg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="0dp"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:padding="0dp"
+                android:text="RSS新闻"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:id="@+id/rb_question"
+                android:background="@drawable/caidan_lanbg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="0dp"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:padding="0dp"
+                android:text="最新问题"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:id="@+id/rb_tag"
+                android:background="@drawable/caidan_lanbg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="0dp"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:padding="0dp"
+                android:text="热门标签"
+                android:textSize="15sp" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_top" >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/login_register_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:layout_alignParentBottom="true"
+        layout="@layout/login_register_btn" />
+
+</RelativeLayout>

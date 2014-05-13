@@ -15,16 +15,20 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/test" >
-
         <!-- android:theme="@android:style/Theme.NoTitleBar" -->
+        <!-- 主页 -->
         <activity 
-            android:name="com.example.animationtobhost.ContactsActivity"
+            android:name="com.example.animationtobhost.HomeActivity"
+            android:label=""
+            android:theme="@style/test_no"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name="com.example.animationtobhost.Index"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
+            android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +40,8 @@
         <activity android:name="com.example.animationtobhost.MyContactsList" />
         <!-- 注册页 -->
         <activity 
+            android:label=""
+            android:theme="@style/test_no"
             android:name="com.example.animationtobhost.RegisterActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" >

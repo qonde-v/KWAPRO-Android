@@ -3,6 +3,17 @@ package com.example.animationtobhost;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.example.animationtobhost.api.HttpConstants;
+import com.example.animationtobhost.util.HttpUtil;
+import com.example.animationtobhost.util.SharePreferenceUtil;
+import com.example.animationtobhost.util.ToastUtil;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -10,9 +21,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,6 +41,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,9 +51,11 @@ import android.widget.Toast;
  *
  */
 public class RegisterActivity extends Activity {
+	private View login_register_btn;//底部导入按钮
+	private String result="";
 	
 	//ctrl+shift+o
-	private Button btnRegister,btnRegisterFinish,btnLogin;
+	private Button btnRegisterFinish;
 	private EditText txtLoginName,txtPwd,txtEmail;
 	private ImageView imgbtnMale,imgbtnFemale,imgMale,imgFemale;
 	
@@ -45,8 +63,8 @@ public class RegisterActivity extends Activity {
 	private PopupWindow mPopPic;// menuWindow;
 	private LayoutInflater inflater; // 这个是将xml中的布局显示在屏幕上的关键类
 	private View layout;
-	private TextView btnLogin_pop, btnCancel_pop;
-	//private ImageView imgLogin, imgCancel;
+	private TextView btnLogin, btnCancel;
+	private ImageView imgLogin, imgCancel;
 	private EditText txtLoginName_pop, txtPwd_pop;
 	
 	private ImageView btnCammer,btnPhotoChoose;
@@ -60,18 +78,18 @@ public class RegisterActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		
 		setContentView(R.layout.register);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.register_title);
 
 		findViews();
 		
 		ViewClickListener();
+		
+		initButton();
 	}
 	
 	
 	// 加载事件
 	public void ViewClickListener() {
-		btnRegister.setOnClickListener(hander);
-		btnLogin.setOnClickListener(hander);
 		btnRegisterFinish.setOnClickListener(hander);
 		imgbtnMale.setOnClickListener(hander);//男按钮
 		imgbtnFemale.setOnClickListener(hander);//女按钮
@@ -85,18 +103,6 @@ public class RegisterActivity extends Activity {
 			// TODO Auto-generated method stub
 
 			switch (v.getId()) {
-			case R.id.btnLogin://登录窗
-				//Intent i = new Intent(Register.this, Login.class);
-				//startActivity(i);
-				// Toast.makeText(ContactsActivity.this, "m2",
-				// Toast.LENGTH_LONG).show();
-				popWinndow();
-				break;
-			case R.id.btnRegister://注册窗
-				Intent i2 = new Intent(RegisterActivity.this, RegisterActivity.class);
-				startActivity(i2);
-				
-				break;
 			case R.id.imgbtnMale://男按钮
 				 //Toast.makeText(Register.this, "ok",
 				 //Toast.LENGTH_LONG).show();
@@ -113,33 +119,55 @@ public class RegisterActivity extends Activity {
 				
 				break;
 			case R.id.btnRegisterFinish://注册验证
-				if(txtLoginName.getText().length()==0|| 
-						   txtPwd.getText().length()==0||
-						   txtEmail.getText().length()==0)
-						{
-							//AlertDialog.Builder alert = new AlertDialog.Builder(ConnectivityActivity.this);
-							AlertDialog.Builder alert =new AlertDialog.Builder(RegisterActivity.this);
-							alert.setTitle("友情提醒")
-							.setMessage("用户名密码邮箱不能为空")
-							.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-								
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									// TODO Auto-generated method stub
-									
-								}
-							}).show();
-							return;
-						}
-//						else{
-//							Intent i=new Intent();
-//							setResult(RESULT_OK,i);
-//							finish();
-//							finish();
-//						}
-						
+				userRegister();
 				break;
 			}
+		}
+		
+		//注册
+		private void userRegister(){
+			final String name=txtLoginName.getText().toString();
+			final String pwd= txtPwd.getText().toString();
+			final String email=txtEmail.getText().toString();
+			if(name.equals("")||pwd.equals("")||email.equals("")){
+				AlertDialog.Builder alert =new AlertDialog.Builder(RegisterActivity.this);
+				alert.setTitle("友情提醒")
+				.setMessage("用户名密码邮箱不能为空")
+				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+					}
+				}).show();
+				return;
+			}
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+
+					Map<String, String> maps = new HashMap<String, String>();
+					maps.put("user", name);
+					maps.put("pwd", pwd);
+					maps.put("email", pwd);
+					Message msg = new Message();
+					try {
+						result = HttpUtil.requestByPost(HttpConstants.HttpRegister,
+								maps, 8);
+						if(result==null||result.equals("[]")||result.equals("")||result.equals("0")||result.equals("1")){
+							msg.what = 2;
+						}else{
+							msg.what = 1;
+						}
+						RegisterActivity.this.MyHandler.sendMessage(msg);
+					} catch (Exception e) {
+						e.printStackTrace();
+						msg.what = 2;
+					}
+					Log.i("jsonresult", result);
+
+				}
+			}).start();
 		}
 /**
  * 弹照相窗
@@ -260,138 +288,11 @@ public class RegisterActivity extends Activity {
 			}
 		}
 	}
-	
-	/**
-	 * 弹窗登录
-	 */
-	private void popWinndow() {
 
-		initPopWindow();
-		// mPop.showAsDropDown(this.layout);// 以这个Button为anchor（可以理解为锚，基准），在下方弹出
-		// mPop.showAtLocation(this.findViewById(R.id.main),
-		// Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-		// //设置layout在PopupWindow中显示的位置
-//		mPop.showAtLocation(Register.this.findViewById(R.id.main),
-//				Gravity.CENTER, 0, 0);// 在屏幕居中，无偏移
-
-	
-
-	}
-	
-	private void initPopWindow() {
-		if (mPop == null) {
-			inflater=(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			// layout = View.inflate(this, R.layout.test2, null);
-			//layout = View.inflate(this, R.layout.login, null);
-			layout = inflater.inflate(R.layout.login, null);
-			// layout =
-			// getLayoutInflater().inflate(R.layout.hotel_sort_popview,null);
-			// mPop= new PopupWindow(layout,LayoutParams.FILL_PARENT,
-			// LayoutParams.WRAP_CONTENT); //后两个参数是width和height
-			mPop = new PopupWindow(layout, LayoutParams.WRAP_CONTENT,
-					LayoutParams.WRAP_CONTENT);
-			mPop.setFocusable(true);
-			mPop.setOutsideTouchable(true);
-			
-			BitmapDrawable drawable=new BitmapDrawable();
-			mPop.setBackgroundDrawable(drawable);// 需要设置一下此参数，点击外边可消失
-			mPop.setAnimationStyle(android.R.style.Animation_Toast);
-			
-            //监听窗口消失
-            mPop.setOnDismissListener(new OnDismissListener() {
-				
-				@Override
-				public void onDismiss() {
-					WindowManager.LayoutParams lp = getWindow().getAttributes();
-		            lp.alpha = 1.0f; //0.0-1.0
-		            getWindow().setAttributes(lp);
-		            mPop=null;
-					
-				}
-			});
-           
-            
-
-			btnCancel_pop = (TextView) layout.findViewById(R.id.btnCalcel);
-			//imgCancel = (ImageView) layout.findViewById(R.id.imgCancel);
-			btnLogin_pop = (TextView) layout.findViewById(R.id.btnLogin);
-			//imgLogin = (ImageView) layout.findViewById(R.id.imgLogin);
-			txtLoginName_pop = (EditText) layout.findViewById(R.id.txtLoginName);
-			txtPwd_pop = (EditText) layout.findViewById(R.id.txtPwd);
-			btnCancel_pop.setOnClickListener(handerPop);
-			//imgCancel.setOnClickListener(handerPop);
-			btnLogin_pop.setOnClickListener(handerPop);
-			//imgLogin.setOnClickListener(handerPop);
-			
-			 mPop.showAtLocation(RegisterActivity.this.findViewById(R.id.main),
-	    				Gravity.CENTER, 0, 0);
-    		mPop.showAsDropDown(layout);//显示窗口
-            //背景透明度
-			WindowManager.LayoutParams lp = getWindow().getAttributes();
-            lp.alpha = 0.8f; //0.0-1.0
-            getWindow().setAttributes(lp);
-			
-		}
-	}
-
-	
-	// 弹窗zhong按钮事件
-	View.OnClickListener handerPop = new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-
-			switch (v.getId()) {
-			// btnCancel.setOnClickListener(hander);
-			// imgCancel.setOnClickListener(hander);
-			// btnLogin.setOnClickListener(hander);
-			// imgLogin.setOnClickListener(hander);
-			case R.id.btnCalcel:
-			//case R.id.imgCancel:
-				if (mPop.isShowing()) {
-					mPop.dismiss();
-				}
-				break;
-
-			case R.id.btnLogin:
-			//case R.id.imgLogin:
-				if (txtLoginName.getText().toString() == "用户名"
-						|| txtPwd.getText().toString() == "密    码"
-//						|| txtLoginName.getText().toString() == ""
-//						|| txtPwd.getText().toString() == ""
-							) 
-				{
-					AlertDialog.Builder alert = new AlertDialog.Builder(
-							RegisterActivity.this);// Login.this);
-					alert.setTitle("友情提醒")
-							.setMessage("用户名密码不能为空")
-							.setPositiveButton("确定",
-									new DialogInterface.OnClickListener() {
-
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											// TODO Auto-generated method
-											// stub
-
-										}
-									}).show();
-					return;
-				}
-				
-				break;
-			}
-		}
-	};
 
 	
 	private void findViews() {
-		// TODO Auto-generated method stub
-		btnRegister=(Button)findViewById(R.id.btnRegister);
 		btnRegisterFinish=(Button)findViewById(R.id.btnRegisterFinish);
-		btnLogin=(Button)findViewById(R.id.btnLogin);
 		txtLoginName=(EditText)findViewById(R.id.txtLoginName);
 		txtPwd=(EditText)findViewById(R.id.txtPassword);
 		txtEmail=(EditText)findViewById(R.id.txtEmail);
@@ -424,4 +325,180 @@ public class RegisterActivity extends Activity {
 			break;
 		}
 	}
+	
+	// 初始化登陆注册按钮事件
+		private void initButton() {
+			login_register_btn = this.findViewById(R.id.login_register_btn);
+			Button btnRegister_btm = (Button) this
+					.findViewById(R.id.btnRegister_btm);
+			Button btnLogin_btm = (Button) this.findViewById(R.id.btnLogin_btm);
+			ImageView imgRegister_btm = (ImageView) this
+					.findViewById(R.id.imgRegister_btm);
+			ImageView imgLogin_btm = (ImageView) this
+					.findViewById(R.id.imgLogin_btm);
+			btnRegister_btm.setOnClickListener(buttonClickListener);
+			btnLogin_btm.setOnClickListener(buttonClickListener);
+			imgRegister_btm.setOnClickListener(buttonClickListener);
+			imgLogin_btm.setOnClickListener(buttonClickListener);
+		}
+		
+		View.OnClickListener buttonClickListener = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				switch (v.getId()) {
+				case R.id.btnLogin_btm:
+				case R.id.imgLogin_btm:
+					initPopWindow();// 登录弹窗
+					break;
+				case R.id.btnRegister_btm:
+				case R.id.imgRegister_btm:
+					Intent i2 = new Intent(RegisterActivity.this,
+							RegisterActivity.class);// 跳转到注册页面
+					startActivity(i2);
+					break;
+				}
+			}
+		};
+
+		// 登录弹窗
+		private void initPopWindow() {
+			if (mPop == null) {
+				inflater = (LayoutInflater) this
+						.getSystemService(LAYOUT_INFLATER_SERVICE);
+				layout = inflater.inflate(R.layout.login, null);
+				mPop = new PopupWindow(layout, LayoutParams.WRAP_CONTENT,
+						LayoutParams.WRAP_CONTENT);
+				mPop.setFocusable(true);
+				mPop.setOutsideTouchable(true);
+				btnCancel = (TextView) layout.findViewById(R.id.btnCalcel);
+				imgCancel = (ImageView) layout.findViewById(R.id.imgCancel);
+				btnLogin = (TextView) layout.findViewById(R.id.btnLogin);
+				imgLogin = (ImageView) layout.findViewById(R.id.imgLogin);
+				txtLoginName = (EditText) layout.findViewById(R.id.txtLoginName);
+				txtPwd = (EditText) layout.findViewById(R.id.txtPwd);
+				btnCancel.setOnClickListener(handerPop);
+				imgCancel.setOnClickListener(handerPop);
+				btnLogin.setOnClickListener(handerPop);
+				imgLogin.setOnClickListener(handerPop);
+				BitmapDrawable drawable = new BitmapDrawable();
+				mPop.setBackgroundDrawable(drawable);// 需要设置一下此参数，点击外边可消失
+				mPop.setAnimationStyle(android.R.style.Animation_Toast);
+				// 监听窗口消失
+				mPop.setOnDismissListener(new OnDismissListener() {
+					@Override
+					public void onDismiss() {
+						WindowManager.LayoutParams lp = getWindow().getAttributes();
+						lp.alpha = 1.0f; // 0.0-1.0
+						getWindow().setAttributes(lp);
+						mPop = null;
+
+					}
+				});
+				mPop.showAtLocation(RegisterActivity.this.findViewById(R.id.main),
+						Gravity.CENTER, 0, 0);
+				mPop.showAsDropDown(layout);// 显示窗口
+				// 背景透明度
+				WindowManager.LayoutParams lp = getWindow().getAttributes();
+				lp.alpha = 0.8f; // 0.0-1.0
+				getWindow().setAttributes(lp);
+			}
+		}
+
+		// 弹窗中按钮事件
+		View.OnClickListener handerPop = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				switch (v.getId()) {
+				case R.id.btnCalcel:
+				case R.id.imgCancel://点击取消
+					if (mPop.isShowing()) {
+						mPop.dismiss();
+					}
+					break;
+				case R.id.btnLogin:
+				case R.id.imgLogin://点击登陆
+					userLogin();
+					break;
+				}
+			}
+		};
+
+		// 登陆
+		private void userLogin() {
+			final String name = txtLoginName.getText().toString();
+			final String pwd = txtPwd.getText().toString();
+			if (name.equals("") || pwd.equals("")) {
+				AlertDialog.Builder alert = new AlertDialog.Builder(
+						RegisterActivity.this);// Login.this);
+				alert.setTitle("友情提醒")
+						.setMessage("用户名密码不能为空")
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								}).show();
+				return;
+			}
+			if (mPop.isShowing() && mPop != null) {
+				mPop.dismiss();
+			}
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+
+					Map<String, String> maps = new HashMap<String, String>();
+					maps.put("user", name);
+					maps.put("pwd", pwd);
+					Message msg = new Message();
+					try {
+						result = HttpUtil.requestByPost(HttpConstants.HttpLogin,
+								maps, 8);
+						if(result==null||result.equals("[]")||result.equals("")||result.equals("0")){
+							msg.what = 2;
+						}else{
+							msg.what = 1;
+						}
+						RegisterActivity.this.MyHandler.sendMessage(msg);
+					} catch (Exception e) {
+						e.printStackTrace();
+						msg.what = 2;
+					}
+					Log.i("jsonresult", result);
+				}
+			}).start();
+		}
+
+		Handler MyHandler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 1:// 登录成功
+					ToastUtil.toastShort(RegisterActivity.this, "登陆成功");
+					JSONObject jsonObj;
+					try {
+						jsonObj = new JSONObject(result);
+						String uid = jsonObj.getString("uid");
+						String email = jsonObj.getString("email");
+						SharePreferenceUtil sharedPreferences = new SharePreferenceUtil(
+								RegisterActivity.this, "user");
+						sharedPreferences.saveSharedPreferencesString("uid", uid);
+						sharedPreferences.saveSharedPreferencesString("email", email);
+						finish();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					break;
+				case 2://登陆失败
+					ToastUtil.toastShort(RegisterActivity.this, "登陆失败");
+				default:
+					break;
+				}
+			};
+		};
+	
+
+		
 }

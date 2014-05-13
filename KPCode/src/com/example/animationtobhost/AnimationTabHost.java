@@ -53,11 +53,11 @@ public class AnimationTabHost extends LinearLayout {
 	static final String TAB = "tab_";
 	private Context context;
 	
-	private int offset = 0; // 动画偏移量
-	private int currIndex = 0; // 当前索引
-	private int bmpW = 0; // 动画图片宽度
+//	private int offset = 0; // 动画偏移量
+//	private int currIndex = 0; // 当前索引
+//	private int bmpW = 0; // 动画图片宽度
 	
-	private ImageView glide; //  // 动画图片，tabhost标题下的小图,此处不需要,,隐藏
+	//private ImageView glide; //  // 动画图片，tabhost标题下的小图,此处不需要,,隐藏
 	/**
 	 * @param context
 	 */
@@ -88,21 +88,21 @@ public class AnimationTabHost extends LinearLayout {
 	/**
 	 * 初始化动画,tabhost标题下的小图,此处不需要,隐藏
 	 */
-	private void InitImageView(int count) {
-		// // 动画图片，tabhost标题下的小图,此处不需要,隐藏
-		glide = animationTabWidget.getSlideImageView();
-		//获取屏幕分辨率及DisplayMetrics
-		DisplayMetrics dm = new DisplayMetrics();
-		((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(dm);
-		int screenW = dm.widthPixels;// 获取分辨率宽度
-		bmpW = screenW / count;
-		LayoutParams params = new LayoutParams(bmpW, DisplayUtils.dipToPixel(6));
-		glide.setLayoutParams(params);
-		offset = (screenW / count - bmpW) / 2;// 计算偏移量
-		Matrix matrix = new Matrix();
-		matrix.postTranslate(offset, 0);
-		glide.setImageMatrix(matrix);// 设置动画初始位置
-	}
+//	private void InitImageView(int count) {
+//		// // 动画图片，tabhost标题下的小图,此处不需要,隐藏
+//		glide = animationTabWidget.getSlideImageView();
+//		//获取屏幕分辨率及DisplayMetrics
+//		DisplayMetrics dm = new DisplayMetrics();
+//		((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(dm);
+//		int screenW = dm.widthPixels;// 获取分辨率宽度
+//		bmpW = screenW / count;
+//		LayoutParams params = new LayoutParams(bmpW, DisplayUtils.dipToPixel(6));
+//		glide.setLayoutParams(params);
+//		offset = (screenW / count - bmpW) / 2;// 计算偏移量
+//		Matrix matrix = new Matrix();
+//		matrix.postTranslate(offset, 0);
+//		glide.setImageMatrix(matrix);// 设置动画初始位置
+//	}
 	private List<Activity> activities;
 	int currentTab=0;
 
@@ -119,7 +119,7 @@ public class AnimationTabHost extends LinearLayout {
 		ActivityGroup activityGroup = (ActivityGroup) context;
 		int count  = intents.size();
 		//tabhost标题下的小图,此处不需要,隐藏
-		InitImageView(count);
+		//InitImageView(count);
 		for (int i = 0; i < count; i++) {
 			Intent intent = intents.get(i);
 			//如果设置，并且这个Activity已经在当前的Task中运行，因此，不再是重新启动一个这个Activity的实例，
@@ -163,15 +163,15 @@ public class AnimationTabHost extends LinearLayout {
 		
 		private int count;
 		private int[] pagetabs;
-		protected int tab = offset * 2 + bmpW;
+		//protected int tab = offset * 2 + bmpW;
 		
 		public MyOnPageChangeListener(int count){
 			
 			this.count = count;
 			pagetabs = new int[count];
-			for (int i = 0; i < count; i++) {
-				pagetabs[i] = tab*i;
-			}
+//			for (int i = 0; i < count; i++) {
+//				pagetabs[i] = tab*i;
+//			}
 			if(currentTab!=0){
 				onPageSelected(currentTab);
 			}
@@ -181,17 +181,17 @@ public class AnimationTabHost extends LinearLayout {
 			if(pageChangeListener != null){
 				pageChangeListener.onPageChange(arg0);
 			}
-			Animation animation = null;
-			if (arg0 != 0) {
-				pagetabs[0] = offset;
-			}
-			if (arg0 != currIndex) {
-				animation = new TranslateAnimation(pagetabs[currIndex], pagetabs[arg0], 0, 0);
-			}
-			currIndex = arg0;
-			animation.setFillAfter(true);// True:图片停在动画结束位置
-			animation.setDuration(300);
-			glide.startAnimation(animation);
+//			Animation animation = null;
+//			if (arg0 != 0) {
+//				pagetabs[0] = offset;
+//			}
+//			if (arg0 != currIndex) {
+//				animation = new TranslateAnimation(pagetabs[currIndex], pagetabs[arg0], 0, 0);
+//			}
+//			currIndex = arg0;
+//			animation.setFillAfter(true);// True:图片停在动画结束位置
+//			animation.setDuration(300);
+//			glide.startAnimation(animation);
 		}
 
 		@Override

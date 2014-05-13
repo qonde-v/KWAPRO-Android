@@ -1,6 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:whty="http://schemas.android.com/apk/res/com.televehicle.trafficpolice"
-    xmlns:tools="http://schemas.android.com/tools"
       android:id="@+id/main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -56,66 +54,17 @@
         android:id="@+id/tabHost"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:visibility="gone" />
+        android:visibility="visible" />
     <!-- 底部按钮 -->
-
-    <RelativeLayout
-        android:id="@+id/rlBottom"
+    
+    <include
+        android:id="@+id/login_register_btn"
         android:layout_width="fill_parent"
         android:layout_height="46dp"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center"
-        android:background="@drawable/bottom_bg" >
+        layout="@layout/login_register_btn" />
 
-        <RelativeLayout
-            android:id="@+id/rlbtnRegister"
-            android:layout_width="158dp"
-            android:layout_height="fill_parent"
-            android:gravity="left" >
-
-            <ImageView
-                 android:id="@+id/imgRegister_btm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:background="@drawable/zhuce" />
-
-            <Button
-                android:id="@+id/btnRegister_btm"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="65dp"
-                android:background="#00000000"
-                android:text="@string/strRegister"
-                android:textColor="#ffffff" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rlbtnLogin"
-            android:layout_width="158dp"
-            android:layout_height="fill_parent"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/rlbtnRegister" >
-
-            <Button
-                android:id="@+id/btnLogin_btm"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="95dp"
-                android:background="#00000000"
-                android:text="@string/strLogin"
-                android:textColor="#ffffff" />
-
-            <ImageView
-                 android:id="@+id/imgLogin_btm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
-                android:background="@drawable/denglu" />
-        </RelativeLayout>
-    </RelativeLayout>
+    
 
     <!-- 底部按钮old -->
 

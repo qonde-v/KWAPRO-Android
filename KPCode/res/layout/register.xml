@@ -70,6 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="38dp"
                 android:text="@string/strloginname"
                 android:textColor="#000000"
@@ -78,7 +79,7 @@
             <EditText
                 android:id="@+id/txtLoginName"
                 android:layout_width="200dp"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="35dp"
                 android:ems="10" />
@@ -97,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="26dp"
+                android:layout_centerVertical="true"
                 android:text="@string/stremail"
                 android:textColor="#000000"
                 android:textSize="13sp" />
@@ -104,7 +106,7 @@
             <EditText
                 android:id="@+id/txtEmail"
                 android:layout_width="200dp"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="35dp"
                 android:ems="10" >
@@ -120,6 +122,7 @@
 
             <TextView
                 android:id="@+id/textView3"
+                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -131,7 +134,7 @@
             <EditText
                 android:id="@+id/txtPassword"
                 android:layout_width="200dp"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="35dp"
                 android:ems="10"
@@ -153,65 +156,14 @@
                 android:background="@drawable/zhuce_dot_zc" />
         </RelativeLayout>
     </RelativeLayout>
-
-    <!-- 底部按钮 -->
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout2"
+    <include
+        android:id="@+id/login_register_btn"
         android:layout_width="fill_parent"
         android:layout_height="46dp"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center"
-        android:background="@drawable/bottom_bg" >
+        layout="@layout/login_register_btn" />
 
-        <RelativeLayout
-            android:id="@+id/relativeLayout1"
-            android:layout_width="158dp"
-            android:layout_height="fill_parent"
-            android:gravity="left" >
-
-            <!-- android:id="@+id/relativeLayout1" -->
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:background="@drawable/zhuce" />
-
-            <Button
-                android:id="@+id/btnRegister"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="65dp"
-                android:background="#00000000"
-                android:text="@string/strRegister"
-                android:textColor="#ffffff" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="158dp"
-            android:layout_height="fill_parent"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/relativeLayout1" >
-
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="95dp"
-                android:background="#00000000"
-                android:text="@string/strLogin"
-                android:textColor="#ffffff" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
-                android:background="@drawable/denglu" />
-        </RelativeLayout>
-    </RelativeLayout>
+   
 
    
 </RelativeLayout>

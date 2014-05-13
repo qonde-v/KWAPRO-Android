@@ -24,6 +24,15 @@
 	<style name="test" parent="android:Theme"> 
 	    <item name="android:windowTitleSize">40dp</item> 
 		<item name="android:windowTitleBackgroundStyle">@style/CustomWindowTitleBackground</item>
+		<item name="android:windowIsTranslucent">true</item>
+	</style>
+	<!--将Activity的Theme设置成透明-->
+	<style name="Transparent" parent="android:Theme.Light">
+    	<item name="android:windowIsTranslucent">true</item>
+    </style>
+    <style name="test_no" parent="android:Theme"> 
+	    <item name="android:windowTitleSize">40dp</item> 
+		<item name="android:windowTitleBackgroundStyle">@style/CustomWindowTitleBackground</item>
 	</style>
 
     

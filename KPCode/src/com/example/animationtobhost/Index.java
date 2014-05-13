@@ -48,8 +48,9 @@ public class Index extends Activity implements OnClickListener,OnPageChangeListe
 			 ViewPager();
 		} else {
 			Log.d("debug", "不是第一次运行");
-			Intent intent = new Intent(Index.this, ContactsActivity.class);
+			Intent intent = new Intent(Index.this, HomeActivity.class);
 			startActivity(intent);
+			finish();
 		}
 	}
 	
@@ -70,8 +71,9 @@ public class Index extends Activity implements OnClickListener,OnPageChangeListe
 				public void onClick(View arg0) {
 					// TODO Auto-generated method stub
 					Intent intent = new Intent(Index.this,
-							ContactsActivity.class);
+							HomeActivity.class);
 					startActivity(intent);
+					finish();
 				}
 			});
 			}

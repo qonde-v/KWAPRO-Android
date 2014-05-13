@@ -11,45 +11,51 @@
     <com.example.animationtobhost.widget.TextViewBorder 
         android:id="@+id/tv_menu_msg"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:text="消息"
-        android:textSize="20dp"
+        android:gravity="center_vertical"
+        android:textSize="18dp"
         />
     
     <com.example.animationtobhost.widget.TextViewBorder 
         android:id="@+id/tv_menu_firend"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
         android:text="好友"
-         android:textSize="20dp"
+         android:textSize="18dp"
         />
     <com.example.animationtobhost.widget.TextViewBorder 
         android:id="@+id/tv_menu_question"
+        android:gravity="center_vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:text="问题"
-         android:textSize="20dp"
+         android:textSize="18dp"
         />
     <com.example.animationtobhost.widget.TextViewBorder 
         android:id="@+id/tv_menu_info"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_height="30dp"
         android:text="跟人信息"
-         android:textSize="20dp"
+         android:textSize="18dp"
         />
     <com.example.animationtobhost.widget.TextViewBorder 
         android:id="@+id/tv_menu_about"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
         android:text="关于Kwapro"
-         android:textSize="20dp"
+         android:textSize="18dp"
         />
     <TextView
         android:id="@+id/tv_menu_exit"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:text="退出"
-         android:textSize="20dp"
+        android:gravity="center_vertical"
+         android:textSize="18dp"
         />
 
 </LinearLayout>

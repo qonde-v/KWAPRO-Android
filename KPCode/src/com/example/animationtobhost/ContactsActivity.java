@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,6 +26,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,21 +46,24 @@ import com.example.animationtobhost.AnimationTabHost.onPageChangedListener;
 import com.example.animationtobhost.api.HttpConstants;
 import com.example.animationtobhost.util.HttpUtil;
 import com.example.animationtobhost.util.SharePreferenceUtil;
+import com.example.animationtobhost.util.ToastUtil;
 
 public class ContactsActivity extends ActivityGroup implements
 		onPageChangedListener, OnClickListener {
-	
-	private PopupWindow mPopupwinow = null;//弹出菜单
-	private View llyPopView;//弹出菜单显示的View
-	private ImageView ivMenu;//菜单按钮
+	private long exitTime = 0;// 记录时间
+	private PopupWindow mPopupwinow = null;// 弹出菜单
+	private View llyPopView;// 弹出菜单显示的View
+	private ImageView ivMenu;// 菜单按钮
 	private ImageView ivSearch;
-	private RelativeLayout rlBottom;//底部按钮
-//	private RelativeLayout rlbtnRegister;//注册按钮layout
-//	private RelativeLayout rlbtnLogin;//登录按钮layout
+	private View login_register_btn;//底部导入按钮
+	private String result = "";
+	// private RelativeLayout rlBottom;//底部按钮
+	// private RelativeLayout rlbtnRegister;//注册按钮layout
+	// private RelativeLayout rlbtnLogin;//登录按钮layout
 	private static final String TAG = "WeiboActivity";
 	private static final int NETWORK_ERROR = 1;
 	private Context mContext;
-	private String result="";
+	
 	private AnimationTabHost animationTabHost;
 	private Button btnRegister_btm, btnLogin_btm;
 	// private RelativeLayout rlbtnLogin, rlbtnRegister;
@@ -78,10 +88,10 @@ public class ContactsActivity extends ActivityGroup implements
 
 		getView();
 		initView();
-		
+
 		initButton();
 		initPop();
-		
+
 		checkUser();
 	}
 
@@ -114,21 +124,19 @@ public class ContactsActivity extends ActivityGroup implements
 		animationTabHost.setVisibility(View.VISIBLE);
 	}
 
-	/**
-	 * getview
-	 */
 	private void getView() {
 
 		animationTabHost = (AnimationTabHost) findViewById(R.id.tabHost);
 		animationTabHost.setOnPageChnageListener(this);
 
-		
 	}
-	//初始化登陆注册按钮事件
-	private void initButton(){
-//		rlbtnRegister=(RelativeLayout) this.findViewById(R.id.rlbtnRegister);
-//		rlbtnLogin=(RelativeLayout) this.findViewById(R.id.rlbtnLogin);
-		rlBottom=(RelativeLayout) this.findViewById(R.id.rlBottom);
+
+	// 初始化登陆注册按钮事件
+	private void initButton() {
+		// rlbtnRegister=(RelativeLayout) this.findViewById(R.id.rlbtnRegister);
+		// rlbtnLogin=(RelativeLayout) this.findViewById(R.id.rlbtnLogin);
+		// rlBottom=(RelativeLayout) this.findViewById(R.id.rlBottom);
+		login_register_btn = this.findViewById(R.id.login_register_btn);
 		Button btnRegister_btm = (Button) this
 				.findViewById(R.id.btnRegister_btm);
 		Button btnLogin_btm = (Button) this.findViewById(R.id.btnLogin_btm);
@@ -141,6 +149,7 @@ public class ContactsActivity extends ActivityGroup implements
 		imgRegister_btm.setOnClickListener(buttonClickListener);
 		imgLogin_btm.setOnClickListener(buttonClickListener);
 	}
+
 	View.OnClickListener buttonClickListener = new OnClickListener() {
 
 		@Override
@@ -148,22 +157,24 @@ public class ContactsActivity extends ActivityGroup implements
 			switch (v.getId()) {
 			case R.id.btnLogin_btm:
 			case R.id.imgLogin_btm:
-				initPopWindow();//登录弹窗
+				initPopWindow();// 登录弹窗
 				break;
 			case R.id.btnRegister_btm:
 			case R.id.imgRegister_btm:
-				Intent i2 = new Intent(ContactsActivity.this, RegisterActivity.class);//跳转到注册页面
+				Intent i2 = new Intent(ContactsActivity.this,
+						RegisterActivity.class);// 跳转到注册页面
 				startActivity(i2);
 				break;
 			}
 		}
 	};
 
-	//登录弹窗
+	// 登录弹窗
 	private void initPopWindow() {
 		if (mPop == null) {
-			inflater =(LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-			layout = inflater.inflate( R.layout.login, null);
+			inflater = (LayoutInflater) this
+					.getSystemService(LAYOUT_INFLATER_SERVICE);
+			layout = inflater.inflate(R.layout.login, null);
 			mPop = new PopupWindow(layout, LayoutParams.WRAP_CONTENT,
 					LayoutParams.WRAP_CONTENT);
 			mPop.setFocusable(true);
@@ -178,29 +189,28 @@ public class ContactsActivity extends ActivityGroup implements
 			imgCancel.setOnClickListener(handerPop);
 			btnLogin.setOnClickListener(handerPop);
 			imgLogin.setOnClickListener(handerPop);
-			BitmapDrawable drawable=new BitmapDrawable();
+			BitmapDrawable drawable = new BitmapDrawable();
 			mPop.setBackgroundDrawable(drawable);// 需要设置一下此参数，点击外边可消失
 			mPop.setAnimationStyle(android.R.style.Animation_Toast);
-            //监听窗口消失
-            mPop.setOnDismissListener(new OnDismissListener() {
+			// 监听窗口消失
+			mPop.setOnDismissListener(new OnDismissListener() {
 				@Override
 				public void onDismiss() {
 					WindowManager.LayoutParams lp = getWindow().getAttributes();
-		            lp.alpha = 1.0f; //0.0-1.0
-		            getWindow().setAttributes(lp);
-		            mPop=null;
-					
+					lp.alpha = 1.0f; // 0.0-1.0
+					getWindow().setAttributes(lp);
+					mPop = null;
+
 				}
 			});
-            mPop.showAtLocation(ContactsActivity.this.findViewById(R.id.main),
-    				Gravity.CENTER, 0, 0);
-    		mPop.showAsDropDown(layout);//显示窗口
-    		//背景透明度
+			mPop.showAtLocation(ContactsActivity.this.findViewById(R.id.main),
+					Gravity.CENTER, 0, 0);
+			mPop.showAsDropDown(layout);// 显示窗口
+			// 背景透明度
 			WindowManager.LayoutParams lp = getWindow().getAttributes();
-            lp.alpha = 0.8f; //0.0-1.0
-            getWindow().setAttributes(lp);
+			lp.alpha = 0.8f; // 0.0-1.0
+			getWindow().setAttributes(lp);
 		}
-		
 	}
 
 	// 弹窗中按钮事件
@@ -222,12 +232,12 @@ public class ContactsActivity extends ActivityGroup implements
 			}
 		}
 	};
-	//登陆
-	private void userLogin(){
-		final String name=txtLoginName.getText().toString();
-		final String pwd=txtPwd.getText().toString();
-		if (name.equals("")||pwd.equals(""))
-		{
+
+	// 登陆
+	private void userLogin() {
+		final String name = txtLoginName.getText().toString();
+		final String pwd = txtPwd.getText().toString();
+		if (name.equals("") || pwd.equals("")) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(
 					ContactsActivity.this);// Login.this);
 			alert.setTitle("友情提醒")
@@ -236,49 +246,67 @@ public class ContactsActivity extends ActivityGroup implements
 							new DialogInterface.OnClickListener() {
 
 								@Override
-								public void onClick(
-										DialogInterface dialog,
+								public void onClick(DialogInterface dialog,
 										int which) {
 								}
 							}).show();
 			return;
 		}
-		if (mPop.isShowing()&&mPop!=null) {
+		if (mPop.isShowing() && mPop != null) {
 			mPop.dismiss();
 		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				
-				Map<String, String> maps=new HashMap<String, String>();
+
+				Map<String, String> maps = new HashMap<String, String>();
 				maps.put("user", name);
 				maps.put("pwd", pwd);
-				
+				Message msg = new Message();
 				try {
-					result=HttpUtil.requestByPost(HttpConstants.HttpLogin, maps, 8);
-					Message msg=new Message();
-					msg.what=1;
+					result = HttpUtil.requestByPost(HttpConstants.HttpLogin,
+							maps, 8);
+					if(result==null||result.equals("[]")||result.equals("")||result.equals("0")){
+						msg.what = 2;
+					}else{
+						msg.what = 1;
+					}
 					ContactsActivity.this.MyHandler.sendMessage(msg);
 				} catch (Exception e) {
 					e.printStackTrace();
+					msg.what = 2;
 				}
-				
+				Log.i("jsonresult", result);
+
 			}
 		}).start();
 	}
-	
-	Handler MyHandler=new Handler(){
+
+	Handler MyHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case 1://登录成功
-				Log.i("result1", result);
-				SharePreferenceUtil sharedPreferences=new SharePreferenceUtil(ContactsActivity.this, "share");
-				sharedPreferences.saveSharedPreferencesString("user", "test");
-				checkUser();
-			    
-				break;
+			case 1:// 登录成功
+				ToastUtil.toastShort(ContactsActivity.this, "登陆成功");
+				JSONObject jsonObj;
+				try {
+					jsonObj = new JSONObject(result);
+					String uid = jsonObj.getString("uid");
+					String email = jsonObj.getString("email");
+					SharePreferenceUtil sharedPreferences = new SharePreferenceUtil(
+							ContactsActivity.this, "user");
+					sharedPreferences.saveSharedPreferencesString("uid", uid);
+					sharedPreferences.saveSharedPreferencesString("email", email);
+					checkUser();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 
+				break;
+			case 2://登陆失败
+				ToastUtil.toastShort(ContactsActivity.this, "登陆失败");
 			default:
 				break;
 			}
@@ -287,106 +315,144 @@ public class ContactsActivity extends ActivityGroup implements
 
 	@Override
 	public void onClick(View v) {
-		
+
 	}
 
 	@Override
 	public void onPageChange(int index) {
 	}
+
+	// 根据是否登录显示隐藏
+	public void checkUser() {
+		SharePreferenceUtil sharedPreferences = new SharePreferenceUtil(
+				ContactsActivity.this, "user");
+		String user = sharedPreferences.getSharedPreferenceString("uid");
+		if (user == null) {
+			ivMenu.setVisibility(View.GONE);
+			ivSearch.setVisibility(View.GONE);
+			login_register_btn.setVisibility(View.VISIBLE);
+		} else {
+			ivMenu.setVisibility(View.VISIBLE);
+			ivSearch.setVisibility(View.VISIBLE);
+			login_register_btn.setVisibility(View.GONE);
+		}
+	}
+
+	// 初始化弹出菜单
+	public void initPop() {
+		llyPopView = LayoutInflater.from(ContactsActivity.this).inflate(
+				R.layout.popup_menu, null);
+		ivMenu = (ImageView) findViewById(R.id.iv_menu);
+		ivSearch = (ImageView) findViewById(R.id.iv_search);
+		ivMenu.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				WindowManager wm = (WindowManager) ContactsActivity.this
+						.getSystemService(Context.WINDOW_SERVICE);
+				int width = wm.getDefaultDisplay().getWidth();
+				if (mPopupwinow == null) {
+					mPopupwinow = new PopupWindow(llyPopView, width / 3,
+							LayoutParams.WRAP_CONTENT, true);
+					mPopupwinow.setBackgroundDrawable(new ColorDrawable(
+							0x00000000));
+				}
+				Rect frame = new Rect();
+				getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+				int statusBarHeight = frame.top;
+				int contentTop = getWindow().findViewById(
+						Window.ID_ANDROID_CONTENT).getTop();
+				int titleBarHeight = contentTop - statusBarHeight;
+				mPopupwinow.setAnimationStyle(android.R.style.Animation_Dialog);
+				mPopupwinow.showAtLocation(llyPopView, Gravity.RIGHT
+						| Gravity.TOP, 0, titleBarHeight + 40);
+
+				mPopupwinow.showAsDropDown(llyPopView);
+			}
+		});
+		initPopListener();
+	}
+
+	// 弹出菜单监听事件
+	public void initPopListener() {
+		TextView tv_menu_msg = (TextView) llyPopView
+				.findViewById(R.id.tv_menu_msg);
+		TextView tv_menu_firend = (TextView) llyPopView
+				.findViewById(R.id.tv_menu_firend);
+		TextView tv_menu_question = (TextView) llyPopView
+				.findViewById(R.id.tv_menu_question);
+		TextView tv_menu_info = (TextView) llyPopView
+				.findViewById(R.id.tv_menu_info);
+		TextView tv_menu_about = (TextView) llyPopView
+				.findViewById(R.id.tv_menu_about);
+		TextView tv_menu_exit = (TextView) llyPopView
+				.findViewById(R.id.tv_menu_exit);
+		tv_menu_msg.setOnClickListener(menuClick);
+		tv_menu_firend.setOnClickListener(menuClick);
+		tv_menu_question.setOnClickListener(menuClick);
+		tv_menu_info.setOnClickListener(menuClick);
+		tv_menu_about.setOnClickListener(menuClick);
+		tv_menu_exit.setOnClickListener(menuClick);
+	}
+
+	OnClickListener menuClick = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (mPopupwinow != null) {
+				mPopupwinow.dismiss();
+			}
+			switch (v.getId()) {
+			case R.id.tv_menu_msg:
+				Toast.makeText(ContactsActivity.this, "msg", Toast.LENGTH_SHORT)
+						.show();
+				break;
+			case R.id.tv_menu_firend:
+
+				break;
+			case R.id.tv_menu_question:
+
+				break;
+			case R.id.tv_menu_info:
+
+				break;
+			case R.id.tv_menu_about:
+
+				break;
+			case R.id.tv_menu_exit:
+				SharePreferenceUtil sharedPreferences = new SharePreferenceUtil(
+						ContactsActivity.this, "user");
+				sharedPreferences.removeSharedPreferencesString("uid");
+				checkUser();
+				ToastUtil.toastShort(ContactsActivity.this, "注销成功");
+				break;
+			default:
+				break;
+			}
+
+		}
+
+	};
 	
-	//根据是否登录显示隐藏
-	public void checkUser(){
-		SharePreferenceUtil sharedPreferences=new SharePreferenceUtil(ContactsActivity.this, "share");
-		String user=sharedPreferences.getSharedPreferenceString("user");
-		if(user==null){
-        	ivMenu.setVisibility(View.GONE);
-        	ivSearch.setVisibility(View.GONE);
-        	rlBottom.setVisibility(View.VISIBLE);
-        }else{
-        	ivMenu.setVisibility(View.VISIBLE);
-        	ivSearch.setVisibility(View.VISIBLE);
-        	rlBottom.setVisibility(View.GONE);
-        }
+	protected void onResume() {
+		super.onResume();
+		checkUser();
 	}
 	
-		//初始化弹出菜单
-		public void initPop(){
-		    llyPopView = LayoutInflater.from(ContactsActivity.this).inflate(
-					R.layout.popup_menu, null);
-	        ivMenu=(ImageView) findViewById(R.id.iv_menu);
-	        ivSearch=(ImageView) findViewById(R.id.iv_search);
-	        ivMenu.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					WindowManager wm=(WindowManager) ContactsActivity.this.getSystemService(Context.WINDOW_SERVICE);
-					int width=wm.getDefaultDisplay().getWidth();
-					if (mPopupwinow == null) {
-						mPopupwinow = new PopupWindow(llyPopView,width/3,LayoutParams.WRAP_CONTENT, true);
-						mPopupwinow.setBackgroundDrawable(new ColorDrawable(0x00000000));
-					}
-					Rect frame = new Rect();
-					getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
-					int statusBarHeight = frame.top;
-					int contentTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
-					int titleBarHeight = contentTop - statusBarHeight;
-					mPopupwinow.setAnimationStyle(android.R.style.Animation_Dialog);
-					mPopupwinow.showAtLocation(llyPopView,
-		    				Gravity.RIGHT|Gravity.TOP, 0, titleBarHeight+50);
-					
-					mPopupwinow.showAsDropDown(llyPopView);
-				}
-	       });
-	       initPopListener();
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			exit();
+			return true;
 		}
-		
-		//弹出菜单监听事件
-		public void initPopListener(){
-			TextView tv_menu_msg=(TextView) llyPopView.findViewById(R.id.tv_menu_msg);
-			TextView tv_menu_firend=(TextView) llyPopView.findViewById(R.id.tv_menu_firend);
-			TextView tv_menu_question=(TextView) llyPopView.findViewById(R.id.tv_menu_question);
-			TextView tv_menu_info=(TextView) llyPopView.findViewById(R.id.tv_menu_info);
-			TextView tv_menu_about=(TextView) llyPopView.findViewById(R.id.tv_menu_about);
-			TextView tv_menu_exit=(TextView) llyPopView.findViewById(R.id.tv_menu_exit);
-			tv_menu_msg.setOnClickListener(menuClick);
-			tv_menu_firend.setOnClickListener(menuClick);
-			tv_menu_question.setOnClickListener(menuClick);
-			tv_menu_info.setOnClickListener(menuClick);
-			tv_menu_about.setOnClickListener(menuClick);
-			tv_menu_exit.setOnClickListener(menuClick);
+		return super.onKeyDown(keyCode, event);
+
+	}
+	//退出
+	public void exit() {
+		if ((System.currentTimeMillis() - exitTime) > 2000) {
+			ToastUtil.toastShort(ContactsActivity.this, "再按一次退出系统");
+			exitTime = System.currentTimeMillis();
+		} else {
+			System.exit(0);
 		}
-		OnClickListener menuClick=new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if(mPopupwinow!=null){
-					mPopupwinow.dismiss();
-				}
-				switch (v.getId()) {
-				case R.id.tv_menu_msg:
-					Toast.makeText(ContactsActivity.this, "msg", Toast.LENGTH_SHORT).show();
-					
-					break;
-				case R.id.tv_menu_firend:
-					
-					break;
-				case R.id.tv_menu_question:
-								
-					break;
-				case R.id.tv_menu_info:
-					
-					break;
-				case R.id.tv_menu_about:
-					
-					break;
-				case R.id.tv_menu_exit:
-					SharePreferenceUtil sharedPreferences=new SharePreferenceUtil(ContactsActivity.this, "share");
-					sharedPreferences.removeSharedPreferencesString("user");
-					checkUser();
-					break;
-				default:
-					break;
-				}
-				
-			}
-			
-		};
+	}
 }

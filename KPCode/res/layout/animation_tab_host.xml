@@ -7,7 +7,7 @@
     <com.example.animationtobhost.AnimationTabWidget
         android:id="@+id/vWidget"
         android:layout_width="fill_parent"
-        android:layout_height="46dp" >
+        android:layout_height="wrap_content" >
     </com.example.animationtobhost.AnimationTabWidget>
 
     <com.example.animationtobhost.ViewPager
