@@ -16,7 +16,7 @@
 			android:layout_toLeftOf="@+id/iv_menu"
 			android:layout_centerVertical="true"
 			android:layout_height="20dp" 
-			android:text="注册"
+			android:text="@string/strRegister"
 		    />
 		<ImageView 
 		    android:id="@+id/iv_menu"

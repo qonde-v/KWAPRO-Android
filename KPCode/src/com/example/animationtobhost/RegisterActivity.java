@@ -52,7 +52,7 @@ import android.widget.Toast;
  */
 public class RegisterActivity extends Activity {
 	private View login_register_btn;//底部导入按钮
-	private String result="";
+	private String result="";//json返回值
 	
 	//ctrl+shift+o
 	private Button btnRegisterFinish;
@@ -159,12 +159,14 @@ public class RegisterActivity extends Activity {
 						}else{
 							msg.what = 1;
 						}
-						RegisterActivity.this.MyHandler.sendMessage(msg);
+						
 					} catch (Exception e) {
 						e.printStackTrace();
 						msg.what = 2;
+					}finally{
+						RegisterActivity.this.MyHandler.sendMessage(msg);
 					}
-					Log.i("jsonresult", result);
+					
 
 				}
 			}).start();
@@ -445,6 +447,10 @@ public class RegisterActivity extends Activity {
 			if (mPop.isShowing() && mPop != null) {
 				mPop.dismiss();
 			}
+			if (!HttpUtil.checkConnection(RegisterActivity.this)) {
+				ToastUtil.toastShort(RegisterActivity.this, "无网络连接");
+				return;
+			}
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -460,13 +466,15 @@ public class RegisterActivity extends Activity {
 							msg.what = 2;
 						}else{
 							msg.what = 1;
+							Log.i("jsonresult", result);
 						}
-						RegisterActivity.this.MyHandler.sendMessage(msg);
 					} catch (Exception e) {
 						e.printStackTrace();
 						msg.what = 2;
+					}finally{
+						RegisterActivity.this.MyHandler.sendMessage(msg);
 					}
-					Log.i("jsonresult", result);
+					
 				}
 			}).start();
 		}

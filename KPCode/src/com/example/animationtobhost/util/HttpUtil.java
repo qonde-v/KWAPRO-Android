@@ -16,15 +16,28 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Map;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 public class HttpUtil {
 	public static final String TAG_GET = "Get方式";
 	public static final String TAG_POST = "Post方式";
 	public static final int HTTP_200 = 200;
+	
+	// 检测网络连接
+	public static boolean checkConnection(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		if (networkInfo != null) {
+			return networkInfo.isAvailable();
+		}
+		return false;
+	}
 
 	public static String post(String url, Map<String, String> params,
 			Map<String, File> files) throws IOException {

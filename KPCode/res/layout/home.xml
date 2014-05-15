@@ -3,7 +3,7 @@
     android:id="@+id/main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/content_bg"
+    android:background="#ffffff"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -29,7 +29,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:padding="0dp"
-                android:text="RSS新闻"
+                android:text="@string/strnews"
                 android:textSize="15sp" />
 
             <RadioButton
@@ -42,7 +42,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:padding="0dp"
-                android:text="最新问题"
+                android:text="@string/strquestion"
                 android:textSize="15sp" />
 
             <RadioButton
@@ -55,24 +55,25 @@
                 android:button="@null"
                 android:gravity="center"
                 android:padding="0dp"
-                android:text="热门标签"
+                android:text="@string/strtag"
                 android:textSize="15sp" />
         </RadioGroup>
     </LinearLayout>
 
+    
     <LinearLayout
         android:id="@+id/ll_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/login_register_btn"
         android:layout_below="@id/ll_top" >
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_gravity="center" />
     </LinearLayout>
-
     <include
         android:id="@+id/login_register_btn"
         android:layout_width="fill_parent"

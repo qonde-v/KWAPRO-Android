@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.example.animationtobhost.api.HttpConstants;
-import com.example.animationtobhost.util.HttpUtil;
-import com.example.animationtobhost.util.SharePreferenceUtil;
-import com.example.animationtobhost.util.ToastUtil;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -29,31 +27,44 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.PopupWindow.OnDismissListener;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.PopupWindow.OnDismissListener;
 
-public class HomeActivity extends Activity{
+import com.example.animationtobhost.adapter.QuestionAdapter;
+import com.example.animationtobhost.api.HttpConstants;
+import com.example.animationtobhost.model.Question;
+import com.example.animationtobhost.util.HttpUtil;
+import com.example.animationtobhost.util.SharePreferenceUtil;
+import com.example.animationtobhost.util.ToastUtil;
+import com.example.animationtobhost.widget.RTPullListView;
+import com.example.animationtobhost.widget.RTPullListView.OnRefreshListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+public class HomeActivity extends Activity {
 
 	private long exitTime = 0;// 记录时间
 	private PopupWindow mPopupwinow = null;// 弹出菜单
 	private View llyPopView;// 弹出菜单显示的View
 	private ImageView ivMenu;// 菜单按钮
-	private ImageView ivSearch;//查询按钮
+	private ImageView ivSearch;// 查询按钮
 	private View login_register_btn;// 底部导入按钮
-	private String result = "";
+	private String result = "";// json返回值
 	private PopupWindow mPop;// menuWindow;
 	private LayoutInflater inflater; // 这个是将xml中的布局显示在屏幕上的关键类
 	private View layout;
@@ -63,8 +74,16 @@ public class HomeActivity extends Activity{
 	private RadioGroup radioGroup;
 	private ViewPager viewPager;
 	private List<View> views;
-	private View view1,view2,view3;
-	private int checkedIdArray[]=new int[]{R.id.rb_news,R.id.rb_question,R.id.rb_tag};
+	private View view1, view2, view3;
+	private int checkedIdArray[] = new int[] { R.id.rb_news, R.id.rb_question,
+			R.id.rb_tag };
+	private List<Question> questionList;
+	private QuestionAdapter questionAdapter;
+	private int pageIndex = 0;
+
+	private RTPullListView lvQuestion;
+	private ProgressBar moreProgressBar;
+	private RelativeLayout footerView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,56 +95,216 @@ public class HomeActivity extends Activity{
 		initButton();
 		initPop();
 		checkUser();
+		if (!HttpUtil.checkConnection(HomeActivity.this)) {
+			ToastUtil.toastShort(HomeActivity.this, "无网络连接");
+			return;
+		}
+		initQuestion();
 	}
-	
-	//初始化页面控件
-	private void initView(){
-		//页头切换事件
-		radioGroup=(RadioGroup) this.findViewById(R.id.radio_group);
-		RadioButton rbDefault=(RadioButton) HomeActivity.this.findViewById(R.id.rb_news);
+	//初始化问题页面
+	private void initQuestion() {
+		pageIndex = 0;
+		questionList = new ArrayList<Question>();
+		loadQuestion(1);
+		lvQuestion = (RTPullListView) view2.findViewById(R.id.lv_question);
+		questionAdapter = new QuestionAdapter(HomeActivity.this, questionList);
+		lvQuestion.setAdapter(questionAdapter);
+
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View view = inflater.inflate(R.layout.list_footview, null);
+		footerView = (RelativeLayout) view
+				.findViewById(R.id.list_footview);
+		moreProgressBar = (ProgressBar) view.findViewById(R.id.footer_progress);
+		lvQuestion.addFooterView(footerView);
+
+		// 下拉刷新监听器
+		lvQuestion.setonRefreshListener(new OnRefreshListener() {
+
+			@Override
+			public void onRefresh() {
+				pageIndex = 0;
+				loadQuestion(1);
+			}
+		});
+
+		// 获取跟多监听器
+		footerView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				//pageIndex++;
+				moreProgressBar.setVisibility(View.VISIBLE);
+				loadQuestion(2);
+			}
+		});
+	}
+
+	// 加载问题页面数据
+	private void loadQuestion(final int type) {
+		if (!HttpUtil.checkConnection(HomeActivity.this)) {
+			ToastUtil.toastShort(HomeActivity.this, "无网络连接");
+			return;
+		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Map<String, String> maps = new HashMap<String, String>();
+				int st = 0 + 10 * pageIndex;
+				int en = 9 + 10 * pageIndex;
+				String start = st + "";
+				String end = en + "";
+				maps.put("start", start);
+				maps.put("end", end);
+				Message msg = new Message();
+				try {
+					result = HttpUtil.requestByPost(
+							HttpConstants.HttpQuestions, maps, 8);
+					if (result == null
+							|| result.equals("") || result.equals("0")) {
+						msg.what = 1;
+					}else if(result.equals("[]")){ 
+						msg.what = 4;
+					}else {
+						if (type == 1) {
+							msg.what = 2;
+						} else {
+							msg.what = 3;
+						}
+						Log.i("QuestionJson", result);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					msg.what = 1;
+				} finally {
+					HomeActivity.this.LoadHandler.sendMessage(msg);
+				}
+
+			}
+		}).start();
+	}
+
+	Handler LoadHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 1:// 加载数据失败
+				questionList.clear();
+				ToastUtil.toastShort(HomeActivity.this, "加载数据失败，请检查网络");
+				moreProgressBar.setVisibility(View.GONE);
+				questionAdapter.notifyDataSetChanged();
+				lvQuestion.onRefreshComplete();
+				lvQuestion.setSelectionfoot();
+				break;
+			case 2:// 重新加载
+				// JSONArray jsonObjs;
+				// JSONObject jsonObj;
+				// jsonObjs = new JSONArray(result);
+				// for (int i = 0; i < jsonObjs.length(); i++) {
+				// jsonObj=(JSONObject) jsonObjs.opt(0);
+				// String uid = jsonObj.getString("uId");
+				// String username = jsonObj.getString("username");
+				// Log.i("Questionuid", uid);
+				// Log.i("Questionusername", username);
+				// }
+				footerView.setVisibility(View.VISIBLE);
+				questionList.clear();
+				try {
+					Gson gson = new Gson();
+					List<Question> newList = gson.fromJson(result,
+							new TypeToken<List<Question>>() {
+							}.getType());
+					questionList.addAll(newList);
+					Log.i("qsize", questionList.size() + "");
+					questionAdapter.notifyDataSetChanged();
+					lvQuestion.onRefreshComplete();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 3:// 加载更多
+				try {
+					Gson gson = new Gson();
+					List<Question> newList = gson.fromJson(result,
+							new TypeToken<List<Question>>() {
+							}.getType());
+					questionList.addAll(newList);
+					Log.i("qsize", questionList.size() + "");
+					moreProgressBar.setVisibility(View.GONE);
+					questionAdapter.notifyDataSetChanged();
+					lvQuestion.setSelectionfoot();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 4:
+				footerView.setVisibility(View.GONE);
+				moreProgressBar.setVisibility(View.GONE);
+				questionAdapter.notifyDataSetChanged();
+				lvQuestion.setSelectionfoot();
+				break;
+			default:
+				break;
+			}
+		};
+	};
+
+	// 初始化页面控件
+	private void initView() {
+		// 页头切换事件
+		radioGroup = (RadioGroup) this.findViewById(R.id.radio_group);
+		RadioButton rbDefault = (RadioButton) HomeActivity.this
+				.findViewById(R.id.rb_question);
 		rbDefault.setBackgroundResource(R.drawable.caidan_qianbg);
-		rbDefault.setTextColor(HomeActivity.this.getResources().getColor(R.color.black));
-		viewPager=(ViewPager) this.findViewById(R.id.viewpager);
+		rbDefault.setTextColor(HomeActivity.this.getResources().getColor(
+				R.color.black));
+		viewPager = (ViewPager) this.findViewById(R.id.viewpager);
 		viewPager.setAdapter(new MyPagerAdapter());
-		view1 = LayoutInflater.from(HomeActivity.this).inflate(R.layout.my_contacts_list, null);
-		view2 = LayoutInflater.from(HomeActivity.this).inflate(R.layout.my_contacts_list, null);
-		view3 = LayoutInflater.from(HomeActivity.this).inflate(R.layout.my_contacts_list, null);
+		view1 = LayoutInflater.from(HomeActivity.this).inflate(
+				R.layout.my_contacts_list, null);
+		view2 = LayoutInflater.from(HomeActivity.this).inflate(
+				R.layout.question, null);
+		view3 = LayoutInflater.from(HomeActivity.this).inflate(
+				R.layout.my_contacts_list, null);
 		views = new ArrayList<View>();
 		views.add(view1);
 		views.add(view2);
 		views.add(view3);
-		viewPager.setCurrentItem(0);
+		viewPager.setCurrentItem(1);
 		viewPager.setOnPageChangeListener(new OnPageChangeListener() {
-			
+
 			@Override
 			public void onPageSelected(int position) {
 				for (int i = 0; i < checkedIdArray.length; i++) {
-					RadioButton rb=(RadioButton) HomeActivity.this.findViewById(checkedIdArray[i]);
-					if(i==position){
+					RadioButton rb = (RadioButton) HomeActivity.this
+							.findViewById(checkedIdArray[i]);
+					if (i == position) {
 						rb.setBackgroundResource(R.drawable.caidan_qianbg);
-						rb.setTextColor(HomeActivity.this.getResources().getColor(R.color.black));
-					}else{
+						rb.setTextColor(HomeActivity.this.getResources()
+								.getColor(R.color.black));
+					} else {
 						rb.setBackgroundResource(R.drawable.caidan_lanbg);
-						rb.setTextColor(HomeActivity.this.getResources().getColor(R.color.white));
+						rb.setTextColor(HomeActivity.this.getResources()
+								.getColor(R.color.white));
 					}
 				}
-				
+
 			}
-			
+
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				
+
 			}
-			
+
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
-				
+
 			}
 		});
 		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				
+
 				switch (checkedId) {
 				case R.id.rb_news:
 					viewPager.setCurrentItem(0);
@@ -142,7 +321,7 @@ public class HomeActivity extends Activity{
 			}
 		});
 	}
-	
+
 	class MyPagerAdapter extends PagerAdapter {
 
 		@Override
@@ -170,14 +349,17 @@ public class HomeActivity extends Activity{
 			((ViewPager) container).removeView(views.get(position));
 		}
 	}
-	
+
 	// 初始化登陆注册按钮事件
 	private void initButton() {
 		login_register_btn = this.findViewById(R.id.login_register_btn);
-		Button btnRegister_btm = (Button) this.findViewById(R.id.btnRegister_btm);
+		Button btnRegister_btm = (Button) this
+				.findViewById(R.id.btnRegister_btm);
 		Button btnLogin_btm = (Button) this.findViewById(R.id.btnLogin_btm);
-		ImageView imgRegister_btm = (ImageView) this.findViewById(R.id.imgRegister_btm);
-		ImageView imgLogin_btm = (ImageView) this.findViewById(R.id.imgLogin_btm);
+		ImageView imgRegister_btm = (ImageView) this
+				.findViewById(R.id.imgRegister_btm);
+		ImageView imgLogin_btm = (ImageView) this
+				.findViewById(R.id.imgLogin_btm);
 		btnRegister_btm.setOnClickListener(buttonClickListener);
 		btnLogin_btm.setOnClickListener(buttonClickListener);
 		imgRegister_btm.setOnClickListener(buttonClickListener);
@@ -289,6 +471,10 @@ public class HomeActivity extends Activity{
 		if (mPop.isShowing() && mPop != null) {
 			mPop.dismiss();
 		}
+		if (!HttpUtil.checkConnection(HomeActivity.this)) {
+			ToastUtil.toastShort(HomeActivity.this, "无网络连接");
+			return;
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -305,19 +491,22 @@ public class HomeActivity extends Activity{
 						msg.what = 2;
 					} else {
 						msg.what = 1;
+						Log.i("jsonresult", result);
 					}
-					HomeActivity.this.MyHandler.sendMessage(msg);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 					msg.what = 2;
+				} finally {
+					HomeActivity.this.LoginHandler.sendMessage(msg);
 				}
-				Log.i("jsonresult", result);
+				
 
 			}
 		}).start();
 	}
 
-	Handler MyHandler = new Handler() {
+	Handler LoginHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -389,8 +578,8 @@ public class HomeActivity extends Activity{
 						Window.ID_ANDROID_CONTENT).getTop();
 				int titleBarHeight = contentTop - statusBarHeight;
 				mPopupwinow.setAnimationStyle(android.R.style.Animation_Dialog);
-				mPopupwinow.showAtLocation(llyPopView, Gravity.RIGHT
-						| Gravity.TOP, 0, titleBarHeight + 40);
+				mPopupwinow.showAtLocation(ivMenu, Gravity.RIGHT
+						| Gravity.TOP, 0, titleBarHeight);
 
 				mPopupwinow.showAsDropDown(llyPopView);
 			}
@@ -482,7 +671,5 @@ public class HomeActivity extends Activity{
 			System.exit(0);
 		}
 	}
-	
-	
 
 }
