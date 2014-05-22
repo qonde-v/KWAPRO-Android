@@ -21,15 +21,15 @@
 
             <ImageView
                 android:id="@+id/imgMale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/zhuce_nan" />
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:src="@drawable/zhuce_nan" />
 
             <ImageView
                 android:id="@+id/imgFemale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/zhuce_nv"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:src="@drawable/zhuce_nv"
                 android:visibility="gone" >
             </ImageView>
         </RelativeLayout>

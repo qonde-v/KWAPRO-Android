@@ -95,10 +95,6 @@ public class HomeActivity extends Activity {
 		initButton();
 		initPop();
 		checkUser();
-		if (!HttpUtil.checkConnection(HomeActivity.this)) {
-			ToastUtil.toastShort(HomeActivity.this, "无网络连接");
-			return;
-		}
 		initQuestion();
 	}
 	//初始化问题页面
@@ -123,6 +119,13 @@ public class HomeActivity extends Activity {
 			@Override
 			public void onRefresh() {
 				pageIndex = 0;
+				if (!HttpUtil.checkConnection(HomeActivity.this)) {
+					questionList.clear();
+					ToastUtil.toastShort(HomeActivity.this, "无网络连接");
+					questionAdapter.notifyDataSetChanged();
+					lvQuestion.onRefreshComplete();
+					return;
+				}
 				loadQuestion(1);
 			}
 		});
@@ -134,6 +137,13 @@ public class HomeActivity extends Activity {
 			public void onClick(View v) {
 				//pageIndex++;
 				moreProgressBar.setVisibility(View.VISIBLE);
+				if (!HttpUtil.checkConnection(HomeActivity.this)) {
+					ToastUtil.toastShort(HomeActivity.this, "无网络连接");
+					moreProgressBar.setVisibility(View.GONE);
+					questionAdapter.notifyDataSetChanged();
+					lvQuestion.setSelectionfoot();
+					return;
+				}
 				loadQuestion(2);
 			}
 		});
@@ -141,10 +151,6 @@ public class HomeActivity extends Activity {
 
 	// 加载问题页面数据
 	private void loadQuestion(final int type) {
-		if (!HttpUtil.checkConnection(HomeActivity.this)) {
-			ToastUtil.toastShort(HomeActivity.this, "无网络连接");
-			return;
-		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

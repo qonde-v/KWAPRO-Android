@@ -8,9 +8,9 @@
     <string name="strLogin">登录</string>
     <string name="strmale">男</string>
 	<string name="strfemale">女</string>
-	<string name="strloginname">用户名:</string>
-	<string name="stremail">邮箱/QQ:</string>
-	<string name="strloginpw">登录密码:</string>
+	<string name="strloginname">用户名</string>
+	<string name="stremail">邮箱/QQ</string>
+	<string name="strloginpw">密码</string>
 	<string name="strcancel">取消</string>
 	<string name="strsure">确定</string>
 	<string name="strfinishregister">完成注册</string>
