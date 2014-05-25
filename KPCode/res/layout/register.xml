@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/rlbtn"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp" >
+            android:layout_marginTop="10dp" >
 
             <TextView
                 android:id="@+id/textView1"
@@ -137,12 +137,40 @@
                 android:inputType="textPassword" >
             </EditText>
         </RelativeLayout>
+        
+         <RelativeLayout
+            android:id="@+id/rlPasswordAgain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rlPassword"
+            android:layout_centerHorizontal="true" >
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_centerVertical="true"
+                android:gravity="right"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="@string/strloginpwAgain"
+                android:textColor="#000000"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/txtPasswordAgain"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/textView4"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:ems="10"
+                android:inputType="textPassword" >
+            </EditText>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_below="@id/rlPassword"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/rlPasswordAgain"
             android:layout_centerHorizontal="true" >
 
             <Button

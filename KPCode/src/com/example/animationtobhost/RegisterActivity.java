@@ -65,7 +65,8 @@ public class RegisterActivity extends Activity {
 
 	// ctrl+shift+o
 	private Button btnRegisterFinish;
-	private EditText txtLoginName, txtPwd, txtEmail;
+	private EditText txtName, txtPwd, txtEmail,txtPwdAgain;//注册
+	private EditText txtLoginName,txtLoginPwd;
 	private ImageView imgbtnMale, imgbtnFemale, imgMale, imgFemale;
 
 	private PopupWindow mPop;// menuWindow;
@@ -79,8 +80,8 @@ public class RegisterActivity extends Activity {
 	private ImageView btnCammer, btnPhotoChoose;
 
 	private String imagePath = Environment.getExternalStorageDirectory()
-			+ "/DCIM/Camera/kp/";
-	private String imageName;
+			+ "/";
+	private String imageName="kp_logo.jpg";
 	private double w = 0;
 	private double h = 0;
 	private int width = 0;
@@ -140,14 +141,30 @@ public class RegisterActivity extends Activity {
 
 		// 注册
 		private void userRegister() {
-			final String name = txtLoginName.getText().toString();
+			final String name = txtName.getText().toString();
 			final String pwd = txtPwd.getText().toString();
+			final String pwdAgain = txtPwdAgain.getText().toString();
 			final String email = txtEmail.getText().toString();
-			if (name.equals("") || pwd.equals("") || email.equals("")) {
+			if (name.equals("") || pwd.equals("") || email.equals("")||pwdAgain.equals("")) {
 				AlertDialog.Builder alert = new AlertDialog.Builder(
 						RegisterActivity.this);
 				alert.setTitle("友情提醒")
 						.setMessage("用户名密码邮箱不能为空")
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+									}
+								}).show();
+				return;
+			}else if(!pwd.equals(pwdAgain)){
+				AlertDialog.Builder alert = new AlertDialog.Builder(
+						RegisterActivity.this);
+				alert.setTitle("友情提醒")
+						.setMessage("两次输入的密码不一致")
 						.setPositiveButton("确定",
 								new DialogInterface.OnClickListener() {
 
@@ -176,7 +193,7 @@ public class RegisterActivity extends Activity {
 								|| result.equals("1")) {
 							msg.what = 2;
 						} else {
-							msg.what = 1;
+							msg.what = 5;
 						}
 
 					} catch (Exception e) {
@@ -233,7 +250,6 @@ public class RegisterActivity extends Activity {
 
 					@Override
 					public void onClick(View v) {
-						imageName= "logo.jpg";
 						final File file = new File(imagePath+imageName);
 						final Uri uri = Uri.fromFile(file);
 						Log.v("camera", "uri创建ok");
@@ -305,11 +321,11 @@ public class RegisterActivity extends Activity {
 		if (resultCode != 0) {
 			// 照相
 			if (requestCode == 1) {
+				FileInputStream fis = null;
+				BufferedInputStream bis = null;
+				Bitmap bp = null;
 				try {
-					FileInputStream fis = null;
-					BufferedInputStream bis = null;
-					Bitmap bp = null;
-					fis = new FileInputStream(imagePath + "logo.jpg");
+					fis = new FileInputStream(imagePath + imageName);
 					bis = new BufferedInputStream(fis);
 					bp = BitmapFactory.decodeStream(bis);
 					DisplayMetrics metric = new DisplayMetrics();
@@ -319,11 +335,24 @@ public class RegisterActivity extends Activity {
 					h = bp.getHeight();
 					h = (width / w) * h;
 					bp = createBitmapBySize(bp, width, ((int) h));
-					write2SDimg(bp, "logo.jpg");
-					File picture = new File(imagePath + "logo.jpg");
+					write2SDimg(bp, imageName);
+					File picture = new File(imagePath + imageName);
 					startPhotoZoom(Uri.fromFile(picture));
 				} catch (Exception e) {
+					bp = null;
 					e.printStackTrace();
+				}finally {
+					try {
+						if (bis != null) {
+							bis.close();
+						}
+						if (fis != null) {
+							fis.close();
+						}
+					} catch (Exception e) {
+						bp = null;
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -341,7 +370,6 @@ public class RegisterActivity extends Activity {
 					h = (width / w) * h;
 					bp = createBitmapBySize(bp, width, ((int) h));
 //					imageName = System.currentTimeMillis() + ".jpg";
-					imageName="logo.jpg";
 					write2SDimg(bp, imageName);
 					File picture = new File(imagePath + imageName);
 					startPhotoZoom(Uri.fromFile(picture));
@@ -417,8 +445,9 @@ public class RegisterActivity extends Activity {
 
 	private void findViews() {
 		btnRegisterFinish = (Button) findViewById(R.id.btnRegisterFinish);
-		txtLoginName = (EditText) findViewById(R.id.txtLoginName);
+		txtName = (EditText) findViewById(R.id.txtLoginName);
 		txtPwd = (EditText) findViewById(R.id.txtPassword);
+		txtPwdAgain = (EditText) findViewById(R.id.txtPasswordAgain);
 		txtEmail = (EditText) findViewById(R.id.txtEmail);
 
 		imgMale = (ImageView) findViewById(R.id.imgMale);
@@ -500,7 +529,7 @@ public class RegisterActivity extends Activity {
 			btnLogin = (TextView) layout.findViewById(R.id.btnLogin);
 			imgLogin = (ImageView) layout.findViewById(R.id.imgLogin);
 			txtLoginName = (EditText) layout.findViewById(R.id.txtLoginName);
-			txtPwd = (EditText) layout.findViewById(R.id.txtPwd);
+			txtLoginPwd = (EditText) layout.findViewById(R.id.txtPwd);
 			btnCancel.setOnClickListener(handerPop);
 			imgCancel.setOnClickListener(handerPop);
 			btnLogin.setOnClickListener(handerPop);
@@ -551,7 +580,7 @@ public class RegisterActivity extends Activity {
 	// 登陆
 	private void userLogin() {
 		final String name = txtLoginName.getText().toString();
-		final String pwd = txtPwd.getText().toString();
+		final String pwd = txtLoginPwd.getText().toString();
 		if (name.equals("") || pwd.equals("")) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(
 					RegisterActivity.this);// Login.this);

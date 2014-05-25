@@ -11,6 +11,7 @@
 	<string name="strloginname">用户名</string>
 	<string name="stremail">邮箱/QQ</string>
 	<string name="strloginpw">密码</string>
+	<string name="strloginpwAgain">确认密码</string>
 	<string name="strcancel">取消</string>
 	<string name="strsure">确定</string>
 	<string name="strfinishregister">完成注册</string>

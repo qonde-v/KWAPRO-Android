@@ -78,10 +78,10 @@ containing a value of this type.
         public static final int btnLogin=0x7f08001a;
         public static final int btnLogin_btm=0x7f080023;
         public static final int btnPhotoChoose=0x7f08002c;
-        public static final int btnRegisterFinish=0x7f08004c;
+        public static final int btnRegisterFinish=0x7f08004f;
         public static final int btnRegister_btm=0x7f080020;
-        public static final int btn_back=0x7f08004f;
-        public static final int btn_back2=0x7f080050;
+        public static final int btn_back=0x7f080052;
+        public static final int btn_back2=0x7f080053;
         public static final int fanyi=0x7f08003f;
         public static final int footer_progress=0x7f080010;
         public static final int head_arrowImageView=0x7f080036;
@@ -99,8 +99,8 @@ containing a value of this type.
         public static final int imgbtnMale=0x7f080044;
         public static final int ivHead=0x7f080024;
         public static final int iv_head=0x7f08003c;
-        public static final int iv_menu=0x7f08004e;
-        public static final int iv_search=0x7f08004d;
+        public static final int iv_menu=0x7f080051;
+        public static final int iv_search=0x7f080050;
         public static final int listView=0x7f080029;
         public static final int list_footview=0x7f08000e;
         public static final int ll_bottom=0x7f08000b;
@@ -119,6 +119,7 @@ containing a value of this type.
         public static final int rlImg=0x7f08002a;
         public static final int rlLogin=0x7f080013;
         public static final int rlPassword=0x7f080049;
+        public static final int rlPasswordAgain=0x7f08004c;
         public static final int rlPwd=0x7f080015;
         public static final int rlTop=0x7f080011;
         public static final int rlTopImg=0x7f080041;
@@ -129,6 +130,7 @@ containing a value of this type.
         public static final int textView1=0x7f080012;
         public static final int textView2=0x7f080047;
         public static final int textView3=0x7f08004a;
+        public static final int textView4=0x7f08004d;
         public static final int text_view=0x7f08000f;
         public static final int tvId=0x7f080026;
         public static final int tvName=0x7f080025;
@@ -147,6 +149,7 @@ containing a value of this type.
         public static final int txtEmail=0x7f080048;
         public static final int txtLoginName=0x7f080014;
         public static final int txtPassword=0x7f08004b;
+        public static final int txtPasswordAgain=0x7f08004e;
         public static final int txtPhoto=0x7f08002d;
         public static final int txtPhotoChoose=0x7f08002e;
         public static final int txtPwd=0x7f080016;
@@ -180,28 +183,29 @@ containing a value of this type.
     public static final class string {
         public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
-        public static final int canmer=0x7f06000f;
-        public static final int get_more=0x7f060013;
-        public static final int headpic=0x7f06000d;
+        public static final int canmer=0x7f060010;
+        public static final int get_more=0x7f060014;
+        public static final int headpic=0x7f06000e;
         public static final int hello_world=0x7f060002;
-        public static final int photo=0x7f06000e;
-        public static final int pull_to_refresh=0x7f060015;
-        public static final int refreshing=0x7f060016;
-        public static final int release_to_refresh=0x7f060014;
+        public static final int photo=0x7f06000f;
+        public static final int pull_to_refresh=0x7f060016;
+        public static final int refreshing=0x7f060017;
+        public static final int release_to_refresh=0x7f060015;
         public static final int strLogin=0x7f060004;
         public static final int strRegister=0x7f060003;
-        public static final int strcancel=0x7f06000a;
+        public static final int strcancel=0x7f06000b;
         public static final int stremail=0x7f060008;
         public static final int strfemale=0x7f060006;
-        public static final int strfinishregister=0x7f06000c;
+        public static final int strfinishregister=0x7f06000d;
         public static final int strloginname=0x7f060007;
         public static final int strloginpw=0x7f060009;
+        public static final int strloginpwAgain=0x7f06000a;
         public static final int strmale=0x7f060005;
-        public static final int strnews=0x7f060010;
-        public static final int strquestion=0x7f060011;
-        public static final int strsure=0x7f06000b;
-        public static final int strtag=0x7f060012;
-        public static final int updating=0x7f060017;
+        public static final int strnews=0x7f060011;
+        public static final int strquestion=0x7f060012;
+        public static final int strsure=0x7f06000c;
+        public static final int strtag=0x7f060013;
+        public static final int updating=0x7f060018;
     }
     public static final class style {
         /** 
