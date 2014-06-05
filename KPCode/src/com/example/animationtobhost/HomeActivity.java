@@ -236,8 +236,7 @@ public class HomeActivity extends Activity {
 							}.getType());
 					questionList.addAll(newList);
 					Log.i("qsize", questionList.size() + "");
-					if(newList.size()==0)
-						moreProgressBar.setVisibility(View.GONE);
+					moreProgressBar.setVisibility(View.GONE);
 					questionAdapter.notifyDataSetChanged();
 					lvQuestion.setSelectionfoot();
 				} catch (Exception e) {
@@ -249,6 +248,7 @@ public class HomeActivity extends Activity {
 				moreProgressBar.setVisibility(View.GONE);
 				questionAdapter.notifyDataSetChanged();
 				lvQuestion.setSelectionfoot();
+				ToastUtil.toastShort(HomeActivity.this, "没有更多问题 ");
 				break;
 			default:
 				break;
