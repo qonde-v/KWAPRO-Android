@@ -135,7 +135,7 @@ public class HomeActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				//pageIndex++;
+				pageIndex++;
 				moreProgressBar.setVisibility(View.VISIBLE);
 				if (!HttpUtil.checkConnection(HomeActivity.this)) {
 					ToastUtil.toastShort(HomeActivity.this, "无网络连接");
@@ -236,7 +236,8 @@ public class HomeActivity extends Activity {
 							}.getType());
 					questionList.addAll(newList);
 					Log.i("qsize", questionList.size() + "");
-					moreProgressBar.setVisibility(View.GONE);
+					if(newList.size()==0)
+						moreProgressBar.setVisibility(View.GONE);
 					questionAdapter.notifyDataSetChanged();
 					lvQuestion.setSelectionfoot();
 				} catch (Exception e) {
