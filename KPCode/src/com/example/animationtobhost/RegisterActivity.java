@@ -502,7 +502,11 @@ public class RegisterActivity extends Activity {
 			switch (v.getId()) {
 			case R.id.btnLogin_btm:
 			case R.id.imgLogin_btm:
-				initPopWindow();// 登录弹窗
+//				initPopWindow();// 登录弹窗
+				Intent intent = new Intent(RegisterActivity.this,
+						LoginActivity.class);// 跳转到登录页面
+				startActivity(intent);
+				finish();
 				break;
 			case R.id.btnRegister_btm:
 			case R.id.imgRegister_btm:

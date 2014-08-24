@@ -77,6 +77,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="102dp"
-        android:text="TextView" />
+        android:text="" />
 
 </RelativeLayout>

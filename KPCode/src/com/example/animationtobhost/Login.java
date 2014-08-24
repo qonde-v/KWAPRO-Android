@@ -92,9 +92,9 @@ public class Login extends Activity {
 
 				}
 				break;
-			case R.id.btnCalcel|R.id.imgCancel:
-				
-				break;
+//			case R.id.btnCalcel|R.id.imgCancel:
+//				
+//				break;
 			}
 			
 			// } catch (Exception ex) {

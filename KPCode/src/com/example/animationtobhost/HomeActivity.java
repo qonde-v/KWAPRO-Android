@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +23,7 @@ import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.test.TouchUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -32,6 +34,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,6 +51,7 @@ import android.widget.Toast;
 
 import com.example.animationtobhost.adapter.QuestionAdapter;
 import com.example.animationtobhost.api.HttpConstants;
+import com.example.animationtobhost.model.Answer;
 import com.example.animationtobhost.model.Question;
 import com.example.animationtobhost.util.HttpUtil;
 import com.example.animationtobhost.util.SharePreferenceUtil;
@@ -65,6 +70,7 @@ public class HomeActivity extends Activity {
 	private ImageView ivSearch;// 查询按钮
 	private View login_register_btn;// 底部导入按钮
 	private String result = "";// json返回值
+	private String resultAnswer = "";// json返回值
 	private PopupWindow mPop;// menuWindow;
 	private LayoutInflater inflater; // 这个是将xml中的布局显示在屏幕上的关键类
 	private View layout;
@@ -78,6 +84,7 @@ public class HomeActivity extends Activity {
 	private int checkedIdArray[] = new int[] { R.id.rb_news, R.id.rb_question,
 			R.id.rb_tag };
 	private List<Question> questionList;
+	private List<Answer> answerList;
 	private QuestionAdapter questionAdapter;
 	private int pageIndex = 0;
 
@@ -101,17 +108,37 @@ public class HomeActivity extends Activity {
 	private void initQuestion() {
 		pageIndex = 0;
 		questionList = new ArrayList<Question>();
-		loadQuestion(1);
+		answerList=new ArrayList<Answer>();
 		lvQuestion = (RTPullListView) view2.findViewById(R.id.lv_question);
-		questionAdapter = new QuestionAdapter(HomeActivity.this, questionList);
-		lvQuestion.setAdapter(questionAdapter);
-
+		questionAdapter = new QuestionAdapter(HomeActivity.this, questionList,answerList);
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View view = inflater.inflate(R.layout.list_footview, null);
 		footerView = (RelativeLayout) view
 				.findViewById(R.id.list_footview);
 		moreProgressBar = (ProgressBar) view.findViewById(R.id.footer_progress);
 		lvQuestion.addFooterView(footerView);
+		lvQuestion.clickToRefresh();
+		loadQuestion(1);
+		lvQuestion.setAdapter(questionAdapter);
+		footerView.setVisibility(View.GONE);
+		lvQuestion.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View view, int arg2,
+					long arg3) {
+				TextView tv_nid=(TextView) view.findViewById(R.id.tv_nid);
+				TextView tv_question=(TextView) view.findViewById(R.id.tv_question);
+//				ToastUtil.toastShort(HomeActivity.this, "nid:"+tv_nid.getText());
+				Intent intent = new Intent(HomeActivity.this,
+						AnswerActivity.class);// 跳转到回答页面
+				Bundle bundle = new Bundle();
+				bundle.putString("nid",tv_nid.getText().toString());
+				bundle.putString("text", tv_question.getText().toString());
+				intent.putExtras(bundle);
+				startActivity(intent);
+				
+			}
+		});
 
 		// 下拉刷新监听器
 		lvQuestion.setonRefreshListener(new OnRefreshListener() {
@@ -161,6 +188,7 @@ public class HomeActivity extends Activity {
 				String end = en + "";
 				maps.put("start", start);
 				maps.put("end", end);
+				maps.put("answernum", "1");
 				Message msg = new Message();
 				try {
 					result = HttpUtil.requestByPost(
@@ -201,39 +229,99 @@ public class HomeActivity extends Activity {
 				questionAdapter.notifyDataSetChanged();
 				lvQuestion.onRefreshComplete();
 				lvQuestion.setSelectionfoot();
+				footerView.setVisibility(View.GONE);
 				break;
 			case 2:// 重新加载
-				// JSONArray jsonObjs;
-				// JSONObject jsonObj;
-				// jsonObjs = new JSONArray(result);
-				// for (int i = 0; i < jsonObjs.length(); i++) {
-				// jsonObj=(JSONObject) jsonObjs.opt(0);
-				// String uid = jsonObj.getString("uId");
-				// String username = jsonObj.getString("username");
-				// Log.i("Questionuid", uid);
-				// Log.i("Questionusername", username);
-				// }
+				
 				footerView.setVisibility(View.VISIBLE);
 				questionList.clear();
 				try {
-					Gson gson = new Gson();
-					List<Question> newList = gson.fromJson(result,
-							new TypeToken<List<Question>>() {
-							}.getType());
+					 JSONArray jsonObjs;
+					 JSONObject jsonObj;
+					 jsonObjs = new JSONArray(result);
+					 List<Question> newList=new ArrayList<Question>();
+					 for (int i = 0; i < jsonObjs.length(); i++) {
+						 jsonObj=(JSONObject) jsonObjs.opt(i);
+						 String text = jsonObj.getString("text");
+						 String question_score = jsonObj.getString("question_score");
+						 String nId=jsonObj.getString("nId");
+						 JSONArray datas=jsonObj.getJSONArray("answerdata");
+						 Log.i("answerdata", datas.toString());
+						 List<Answer> answerList=new ArrayList<Answer>();
+						 for (int j = 0; j < datas.length(); j++) {
+							 JSONObject data=(JSONObject) datas.opt(0);
+							 JSONObject answer=(JSONObject) data.getJSONObject("answer");
+//							 Log.i("answersize", datas.length()+"answer:"+answer.toString());
+							 String atext = answer.getString("text");
+							 Answer a=new Answer();
+							 a.setText(atext);
+							 answerList.add(a);
+						 }
+						 Question q=new Question();
+						 q.setText(text);
+						 q.setnId(nId);
+						 q.setQuestion_score(question_score);
+						 q.setAnswerdata(answerList);
+						 newList.add(q);
+					 }
+					
+//					Gson gson = new Gson();
+//					List<Question> newList = gson.fromJson(result,
+//							new TypeToken<List<Question>>() {
+//							}.getType());
 					questionList.addAll(newList);
-					Log.i("qsize", questionList.size() + "");
+//					for (int i = 0; i < questionList.size(); i++) {
+//						Question question=questionList.get(i);
+//						if(question.getAnswerdata()!=null&&question.getAnswerdata().size()>0)
+//							Log.i("data", question.getAnswerdata().get(0).getText() + "xxx"+question.getAnswerdata());
+//					}
+					
 					questionAdapter.notifyDataSetChanged();
 					lvQuestion.onRefreshComplete();
 				} catch (Exception e) {
 					e.printStackTrace();
+					moreProgressBar.setVisibility(View.GONE);
+					questionAdapter.notifyDataSetChanged();
+					lvQuestion.onRefreshComplete();
+					lvQuestion.setSelectionfoot();
+					footerView.setVisibility(View.GONE);
+					ToastUtil.toastShort(HomeActivity.this, "加载数据失败");
 				}
 				break;
 			case 3:// 加载更多
 				try {
-					Gson gson = new Gson();
-					List<Question> newList = gson.fromJson(result,
-							new TypeToken<List<Question>>() {
-							}.getType());
+					 JSONArray jsonObjs;
+					 JSONObject jsonObj;
+					 jsonObjs = new JSONArray(result);
+					 List<Question> newList=new ArrayList<Question>();
+					 for (int i = 0; i < jsonObjs.length(); i++) {
+						 jsonObj=(JSONObject) jsonObjs.opt(i);
+						 String text = jsonObj.getString("text");
+						 String question_score = jsonObj.getString("question_score");
+						 String nId=jsonObj.getString("nId");
+						 JSONArray datas=jsonObj.getJSONArray("answerdata");
+						 Log.i("answerdata", datas.toString());
+						 List<Answer> answerList=new ArrayList<Answer>();
+						 for (int j = 0; j < datas.length(); j++) {
+							 JSONObject data=(JSONObject) datas.opt(0);
+							 JSONObject answer=(JSONObject) data.getJSONObject("answer");
+//							 Log.i("answersize", datas.length()+"answer:"+answer.toString());
+							 String atext = answer.getString("text");
+							 Answer a=new Answer();
+							 a.setText(atext);
+							 answerList.add(a);
+						 }
+						 Question q=new Question();
+						 q.setText(text);
+						 q.setnId(nId);
+						 q.setQuestion_score(question_score);
+						 q.setAnswerdata(answerList);
+						 newList.add(q);
+					 }
+//					Gson gson = new Gson();
+//					List<Question> newList = gson.fromJson(result,
+//							new TypeToken<List<Question>>() {
+//							}.getType());
 					questionList.addAll(newList);
 					Log.i("qsize", questionList.size() + "");
 					moreProgressBar.setVisibility(View.GONE);
@@ -255,6 +343,84 @@ public class HomeActivity extends Activity {
 			}
 		};
 	};
+	
+//	private void loadAnswer(final String id,final int listnum) {
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				Map<String, String> maps = new HashMap<String, String>();
+//				maps.put("id", id);
+//				maps.put("answernum", "1");
+//				Message msg = new Message();
+//				try {
+//
+//					resultAnswer = HttpUtil.requestByPost(HttpConstants.HttpOneQuestion,
+//							maps, 8);
+//					if (resultAnswer == null || resultAnswer.equals("")
+//							|| resultAnswer.equals("0")) {
+//						msg.what = 1;
+//					}  else if(result.equals("[]")){
+//						
+//					}else {
+//						msg.what = 2;
+//						Log.i("AnswerJson", resultAnswer);
+//					}
+//					Bundle bundle=new Bundle();  
+//                    bundle.putInt("listnum", listnum);  
+//                    msg.setData(bundle);
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					msg.what = 1;
+//				} finally {
+//					HomeActivity.this.LoadAnswerHandler.sendMessage(msg);
+//				}
+//
+//			}
+//		}).start();
+//	}
+//	
+//	Handler LoadAnswerHandler = new Handler() {
+//		@Override
+//		public void handleMessage(Message msg) {
+//			switch (msg.what) {
+//			case 1:// 加载数据失败
+//				break;
+//			case 2:// 加载数据成功
+//				try {
+//					Gson gson = new Gson();
+//					List<Answer> answer = gson.fromJson(resultAnswer,
+//							new TypeToken<List<Answer>>() {
+//							}.getType());
+////					answerList.add(answer);
+//					int listnum=msg.getData().getInt("listnum");
+//					questionList.get(listnum).setAnswerList(answer);
+//					
+//					if(listnum==questionList.size()-1){
+//						lvQuestion.setAdapter(questionAdapter);
+//					}
+//						
+////					if(answer!=null)
+////						Log.i("答案", answer.getText());
+////					for (int i = 0; i < questionList.size(); i++) {
+////						Question question=questionList.get(i);
+////						if(answerList!=null&&answerList.size()>0){
+////							if(question.getnId().equals(answerList.get(0).getnId())){
+////								question.setAnswerList(answerList);
+////								Log.i("答案", answerList.get(0).getText());
+////							}
+////						}
+////					}
+//					questionAdapter.notifyDataSetChanged();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				break;
+//			default:
+//				break;
+//			}
+//		};
+//	};
 
 	// 初始化页面控件
 	private void initView() {
@@ -380,7 +546,10 @@ public class HomeActivity extends Activity {
 			switch (v.getId()) {
 			case R.id.btnLogin_btm:
 			case R.id.imgLogin_btm:
-				initPopWindow();// 登录弹窗
+				Intent intent = new Intent(HomeActivity.this,
+						LoginActivity.class);// 跳转到登录页面
+				startActivity(intent);
+//				initPopWindow();// 登录弹窗
 				break;
 			case R.id.btnRegister_btm:
 			case R.id.imgRegister_btm:
@@ -624,14 +793,14 @@ public class HomeActivity extends Activity {
 			}
 			switch (v.getId()) {
 			case R.id.tv_menu_msg:
-				Toast.makeText(HomeActivity.this, "msg", Toast.LENGTH_SHORT)
-						.show();
 				break;
 			case R.id.tv_menu_firend:
 
 				break;
 			case R.id.tv_menu_question:
-
+				Intent intent = new Intent(HomeActivity.this,
+						MyQuestionActivity.class);// 跳转到注册页面
+				startActivity(intent);
 				break;
 			case R.id.tv_menu_info:
 
@@ -675,6 +844,11 @@ public class HomeActivity extends Activity {
 			ToastUtil.toastShort(HomeActivity.this, "再按一次退出系统");
 			exitTime = System.currentTimeMillis();
 		} else {
+			if(LoginActivity.isSavePwd==false){
+				SharePreferenceUtil sharedPreferences = new SharePreferenceUtil(
+						HomeActivity.this, "user");
+				sharedPreferences.removeSharedPreferencesString("uid");
+			}
 			System.exit(0);
 		}
 	}
