@@ -79,6 +79,14 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
+        <!-- 问题回答详细页 -->
+        <activity 
+            android:label=""
+            android:theme="@style/test_no"
+            android:name="com.example.animationtobhost.AnswerDetailActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>
