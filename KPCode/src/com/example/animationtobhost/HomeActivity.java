@@ -53,6 +53,7 @@ import com.example.animationtobhost.adapter.QuestionAdapter;
 import com.example.animationtobhost.api.HttpConstants;
 import com.example.animationtobhost.model.Answer;
 import com.example.animationtobhost.model.Question;
+import com.example.animationtobhost.model.Tag;
 import com.example.animationtobhost.util.HttpUtil;
 import com.example.animationtobhost.util.SharePreferenceUtil;
 import com.example.animationtobhost.util.ToastUtil;
@@ -103,6 +104,7 @@ public class HomeActivity extends Activity {
 		initPop();
 		checkUser();
 		initQuestion();
+		initTag();
 	}
 	//初始化问题页面
 	private void initQuestion() {
@@ -338,6 +340,51 @@ public class HomeActivity extends Activity {
 				lvQuestion.setSelectionfoot();
 				ToastUtil.toastShort(HomeActivity.this, "没有更多问题 ");
 				break;
+			case 5:
+				ToastUtil.toastShort(HomeActivity.this, "加载数据失败，请检查网络");
+				break;
+			case 6:
+				break;
+			case 7:
+				try{
+				JSONArray jsonObjs;
+				 JSONObject jsonObj;
+				 jsonObjs = new JSONArray(result);
+				 List<Tag> tagList=new ArrayList<Tag>();
+				 for (int i = 0; i < jsonObjs.length(); i++) {
+					 jsonObj=(JSONObject) jsonObjs.opt(i);
+					 String tag_name = jsonObj.getString("tag_name");
+					 String tag_id = jsonObj.getString("tag_id");
+					 String count = jsonObj.getString("count");
+					 Tag tag=new Tag();
+					 tag.setCount(count);
+					 tag.setTag_id(tag_id);
+					 tag.setTag_name(tag_name);
+					 tagList.add(tag);
+				 }
+				 for (int j = 0; j < tagList.size(); j++) {
+					 if(j==0)
+						 tv_tag1.setText(tagList.get(j).getTag_name());
+					 if(j==1)
+						 tv_tag2.setText(tagList.get(j).getTag_name());
+					 if(j==2)
+						 tv_tag3.setText(tagList.get(j).getTag_name());
+					 if(j==3)
+						 tv_tag4.setText(tagList.get(j).getTag_name());
+					 if(j==4)
+						 tv_tag5.setText(tagList.get(j).getTag_name());
+					 if(j==5)
+						 tv_tag6.setText(tagList.get(j).getTag_name());
+					 if(j==6)
+						 tv_tag7.setText(tagList.get(j).getTag_name());
+					 if(j==7)
+						 tv_tag8.setText(tagList.get(j).getTag_name());
+				}
+				}catch (Exception e) {
+					ToastUtil.toastShort(HomeActivity.this, "加载数据失败，请检查网络");
+					e.printStackTrace();
+				}
+				break;
 			default:
 				break;
 			}
@@ -421,7 +468,61 @@ public class HomeActivity extends Activity {
 //			}
 //		};
 //	};
+	TextView tv_tag1,tv_tag2,tv_tag3,tv_tag4,tv_tag5,tv_tag6,tv_tag7,tv_tag8;
+	private void initTag(){
+		tv_tag1=(TextView) view3.findViewById(R.id.tv_tag1);
+		tv_tag2=(TextView) view3.findViewById(R.id.tv_tag2);
+		tv_tag3=(TextView) view3.findViewById(R.id.tv_tag3);
+		tv_tag4=(TextView) view3.findViewById(R.id.tv_tag4);
+		tv_tag5=(TextView) view3.findViewById(R.id.tv_tag5);
+		tv_tag6=(TextView) view3.findViewById(R.id.tv_tag6);
+		tv_tag7=(TextView) view3.findViewById(R.id.tv_tag7);
+		tv_tag8=(TextView) view3.findViewById(R.id.tv_tag8);
+//		tv_tag1.setText("标题");
+//		tv_tag2.setText("标题");
+//		tv_tag3.setText("标题");
+//		tv_tag4.setText("标题");
+//		tv_tag5.setText("标题");
+//		tv_tag6.setText("标题");
+//		tv_tag7.setText("标题");
+//		tv_tag8.setText("标题");
+		loadTag();
+	}
+	
+	private void loadTag() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Map<String, String> maps = new HashMap<String, String>();
+				maps.put("start", "0");
+				maps.put("end", "8");
+				maps.put("lang_code", "zh");
+				Message msg = new Message();
+				try {
+					result = HttpUtil.requestByPost(
+							HttpConstants.HttpHotTag, maps, 8);
+					if (result == null
+							|| result.equals("") || result.equals("0")) {
+						msg.what = 5;
+					}else if(result.equals("[]")){ 
+						msg.what = 6;
+					}else {
+						msg.what = 7;
+						Log.i("TagJson", result);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					msg.what = 5;
+				} finally {
+					HomeActivity.this.LoadHandler.sendMessage(msg);
+				}
 
+			}
+		}).start();
+	}
+	
+	
+	
 	// 初始化页面控件
 	private void initView() {
 		// 页头切换事件
@@ -438,7 +539,7 @@ public class HomeActivity extends Activity {
 		view2 = LayoutInflater.from(HomeActivity.this).inflate(
 				R.layout.question, null);
 		view3 = LayoutInflater.from(HomeActivity.this).inflate(
-				R.layout.my_contacts_list, null);
+				R.layout.tag, null);
 		views = new ArrayList<View>();
 		views.add(view1);
 		views.add(view2);

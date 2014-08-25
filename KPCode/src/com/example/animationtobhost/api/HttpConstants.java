@@ -13,5 +13,7 @@ public class HttpConstants {
 	public static final String HttpMyQuestions=HttpIP+"/KWAPRO/apiweb/myquestions";
 	//问题回答列表
 	public static final String HttpOneQuestion=HttpIP+"/KWAPRO/apiweb/onequestions";
+	//热门标签
+	public static final String HttpHotTag=HttpIP+"/KWAPRO/apiweb/hottag";
 	
 }

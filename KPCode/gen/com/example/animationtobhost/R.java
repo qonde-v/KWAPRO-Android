@@ -55,28 +55,29 @@ containing a value of this type.
         public static final int icon_contacts_avatar_default=0x7f02000e;
         public static final int main_bg=0x7f02000f;
         public static final int pulltorefresh=0x7f020010;
-        public static final int rounded_edittext=0x7f020011;
-        public static final int rounded_layout=0x7f020012;
-        public static final int rounded_layout2=0x7f020013;
-        public static final int shuruk_bg=0x7f020014;
-        public static final int tianchuk_bg=0x7f020015;
-        public static final int top_dot=0x7f020016;
-        public static final int top_logo_bg=0x7f020017;
-        public static final int top_title_bg=0x7f020018;
-        public static final int topxian=0x7f020019;
-        public static final int xiazai=0x7f02001a;
-        public static final int zc_dot_01=0x7f02001b;
-        public static final int zc_dot_02=0x7f02001c;
-        public static final int zhuce=0x7f02001d;
-        public static final int zhuce_d_nan=0x7f02001e;
-        public static final int zhuce_d_nan_an=0x7f02001f;
-        public static final int zhuce_d_nv=0x7f020020;
-        public static final int zhuce_d_nv_an=0x7f020021;
-        public static final int zhuce_dot_zc=0x7f020022;
-        public static final int zhuce_nan=0x7f020023;
-        public static final int zhuce_nv=0x7f020024;
-        public static final int zhuce_tex_bg=0x7f020025;
-        public static final int zhuce_xztx=0x7f020026;
+        public static final int rdss_bg=0x7f020011;
+        public static final int rounded_edittext=0x7f020012;
+        public static final int rounded_layout=0x7f020013;
+        public static final int rounded_layout2=0x7f020014;
+        public static final int shuruk_bg=0x7f020015;
+        public static final int tianchuk_bg=0x7f020016;
+        public static final int top_dot=0x7f020017;
+        public static final int top_logo_bg=0x7f020018;
+        public static final int top_title_bg=0x7f020019;
+        public static final int topxian=0x7f02001a;
+        public static final int xiazai=0x7f02001b;
+        public static final int zc_dot_01=0x7f02001c;
+        public static final int zc_dot_02=0x7f02001d;
+        public static final int zhuce=0x7f02001e;
+        public static final int zhuce_d_nan=0x7f02001f;
+        public static final int zhuce_d_nan_an=0x7f020020;
+        public static final int zhuce_d_nv=0x7f020021;
+        public static final int zhuce_d_nv_an=0x7f020022;
+        public static final int zhuce_dot_zc=0x7f020023;
+        public static final int zhuce_nan=0x7f020024;
+        public static final int zhuce_nv=0x7f020025;
+        public static final int zhuce_tex_bg=0x7f020026;
+        public static final int zhuce_xztx=0x7f020027;
     }
     public static final class id {
         public static final int btnCalcel=0x7f08003b;
@@ -119,6 +120,8 @@ containing a value of this type.
         public static final int ll_bottom=0x7f08002a;
         public static final int ll_detail_answer=0x7f080017;
         public static final int ll_detail_question=0x7f08000f;
+        public static final int ll_tag_bottom=0x7f08007c;
+        public static final int ll_tag_top=0x7f080077;
         public static final int ll_top=0x7f080025;
         public static final int login_register_btn=0x7f080024;
         public static final int lv_answer=0x7f08000d;
@@ -186,6 +189,14 @@ containing a value of this type.
         public static final int tv_reg=0x7f08004d;
         public static final int tv_score=0x7f080063;
         public static final int tv_share=0x7f08000c;
+        public static final int tv_tag1=0x7f080078;
+        public static final int tv_tag2=0x7f080079;
+        public static final int tv_tag3=0x7f08007a;
+        public static final int tv_tag4=0x7f08007b;
+        public static final int tv_tag5=0x7f08007d;
+        public static final int tv_tag6=0x7f08007e;
+        public static final int tv_tag7=0x7f08007f;
+        public static final int tv_tag8=0x7f080080;
         public static final int tv_title=0x7f080003;
         public static final int txtEmail=0x7f08006d;
         public static final int txtLoginName=0x7f080033;
@@ -226,8 +237,9 @@ containing a value of this type.
         public static final int question_item=0x7f030017;
         public static final int register=0x7f030018;
         public static final int register_title=0x7f030019;
-        public static final int test2=0x7f03001a;
-        public static final int title=0x7f03001b;
+        public static final int tag=0x7f03001a;
+        public static final int test2=0x7f03001b;
+        public static final int title=0x7f03001c;
     }
     public static final class string {
         public static final int action_settings=0x7f060001;
