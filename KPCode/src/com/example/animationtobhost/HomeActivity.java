@@ -9,14 +9,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,11 +40,13 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
 import android.widget.ProgressBar;
@@ -68,9 +76,12 @@ public class HomeActivity extends Activity {
 	private PopupWindow mPopupwinow = null;// 弹出菜单
 	private View llyPopView;// 弹出菜单显示的View
 	private ImageView ivMenu;// 菜单按钮
-	private ImageView ivSearch;// 查询按钮
+	private ImageView ivSearch,ivSearch2;// 查询按钮
+	private EditText etSearch;
+	private RelativeLayout rlTitle1,rlTitle2;
 	private View login_register_btn;// 底部导入按钮
 	private String result = "";// json返回值
+	private String result2 = "";// json返回值
 	private String resultAnswer = "";// json返回值
 	private PopupWindow mPop;// menuWindow;
 	private LayoutInflater inflater; // 这个是将xml中的布局显示在屏幕上的关键类
@@ -349,7 +360,7 @@ public class HomeActivity extends Activity {
 				try{
 				JSONArray jsonObjs;
 				 JSONObject jsonObj;
-				 jsonObjs = new JSONArray(result);
+				 jsonObjs = new JSONArray(result2);
 				 List<Tag> tagList=new ArrayList<Tag>();
 				 for (int i = 0; i < jsonObjs.length(); i++) {
 					 jsonObj=(JSONObject) jsonObjs.opt(i);
@@ -499,16 +510,16 @@ public class HomeActivity extends Activity {
 				maps.put("lang_code", "zh");
 				Message msg = new Message();
 				try {
-					result = HttpUtil.requestByPost(
+					result2 = HttpUtil.requestByPost(
 							HttpConstants.HttpHotTag, maps, 8);
-					if (result == null
-							|| result.equals("") || result.equals("0")) {
+					if (result2 == null
+							|| result2.equals("") || result2.equals("0")) {
 						msg.what = 5;
-					}else if(result.equals("[]")){ 
+					}else if(result2.equals("[]")){ 
 						msg.what = 6;
 					}else {
 						msg.what = 7;
-						Log.i("TagJson", result);
+						Log.i("TagJson", result2);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -836,9 +847,43 @@ public class HomeActivity extends Activity {
 				R.layout.popup_menu, null);
 		ivMenu = (ImageView) findViewById(R.id.iv_menu);
 		ivSearch = (ImageView) findViewById(R.id.iv_search);
+		etSearch=(EditText) findViewById(R.id.et_search);
+		rlTitle1=(RelativeLayout) findViewById(R.id.rl_title1);
+		rlTitle2=(RelativeLayout) findViewById(R.id.rl_title2);
+		ivSearch2=(ImageView)findViewById(R.id.iv_search2);
+		ivSearch.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				rlTitle2.setVisibility(View.VISIBLE);
+				rlTitle1.setVisibility(View.GONE);
+				etSearch.setFocusable(true);
+				etSearch.setFocusableInTouchMode(true);
+				etSearch.requestFocus();
+				InputMethodManager inputManager = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
+				inputManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+		});
+		ivSearch2.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				rlTitle2.setVisibility(View.GONE);
+				rlTitle1.setVisibility(View.VISIBLE);
+				etSearch.setText("");
+			}
+		});
 		ivMenu.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				Resources res = HomeActivity.this.getResources();
+		        Bitmap img = BitmapFactory.decodeResource(res, R.drawable.top_dot);
+		        Matrix matrix = new Matrix();
+		        matrix.postRotate(90);
+		        int width1 = img.getWidth();
+		        int height1 = img.getHeight();
+		        Bitmap img_a = Bitmap.createBitmap(img, 0, 0, width1, height1, matrix, true);
+				ivMenu.setImageBitmap(img_a);
 				WindowManager wm = (WindowManager) HomeActivity.this
 						.getSystemService(Context.WINDOW_SERVICE);
 				int width = wm.getDefaultDisplay().getWidth();
@@ -848,6 +893,18 @@ public class HomeActivity extends Activity {
 					mPopupwinow.setBackgroundDrawable(new ColorDrawable(
 							0x00000000));
 				}
+				mPopupwinow.setOnDismissListener(new OnDismissListener() {
+					@Override
+					public void onDismiss() {
+						Resources res = HomeActivity.this.getResources();
+				        Bitmap img = BitmapFactory.decodeResource(res, R.drawable.top_dot);
+				        Matrix matrix = new Matrix();
+				        int width1 = img.getWidth();
+				        int height1 = img.getHeight();
+				        Bitmap img_a = Bitmap.createBitmap(img, 0, 0, width1, height1, matrix, true);
+						ivMenu.setImageBitmap(img_a);
+					}
+				});
 				Rect frame = new Rect();
 				getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
 				int statusBarHeight = frame.top;
@@ -892,6 +949,7 @@ public class HomeActivity extends Activity {
 			if (mPopupwinow != null) {
 				mPopupwinow.dismiss();
 			}
+			
 			switch (v.getId()) {
 			case R.id.tv_menu_msg:
 				break;
